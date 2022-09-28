@@ -1,0 +1,296 @@
+/* Imports */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Abyssinica+SIL&display=swap');
+
+/* Variables */
+:root {
+  --white: #fff;
+  --black: #0a1d20;
+  --theme: #8ff0ba;
+  --theme-2: #baf5d4;
+  --success: var(--theme);
+  --danger: #fa7676;
+
+  --modal-bg: rgba(0, 0, 0, 0.75);
+
+  --btn-padding: 8px 25px;
+
+  --spacing-sm: 5px;
+  --spacing-base: 10px;
+  --spacing-lg: 18px;
+  --spacing-xl: 25px;
+
+  --font-sm: 12px;
+  --font-base: 16px;
+  --font-lg: 20px;
+  --bold: 800;
+  --thin: 200;
+
+  --border-radius: 14px;
+  --round-radius: 50px;
+
+  --disabled-opacity: 0.6;
+  --subtle-opacity: 0.9;
+
+  --drop-shadow-low: 0px 6px 25px -12px #000;
+  --drop-shadow: 0px 6px 30px -10px #000;
+
+  --transition-duration-short: 0.15s;
+  --transition-duration: 0.25s;
+}
+
+/* General styles */
+*:focus-visible {
+  outline: 0;
+}
+h1, h2, p, span, a {
+  margin: unset;
+}
+.brand-text {
+  font-family: 'Abyssinica SIL', serif;
+}
+.desc-text {
+  font-size: var(--font-sm);
+  font-style: italic;
+  opacity: var(--subtle-opacity);
+}
+
+/* Flexbox utility classes */
+.flex {
+  display: flex;
+}
+.flex-centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.align-center {
+  align-items: center;
+}
+.align-evenly {
+  align-items: space-evenly;
+}
+.align-between {
+  align-items: space-between;
+}
+.align-start {
+  align-items: flex-start;
+}
+.align-end {
+  align-items: flex-end;
+}
+.justify-center {
+  justify-content: center;
+}
+.justify-evenly {
+  justify-content: space-evenly;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-start {
+  justify-content: flex-start;
+}
+.justify-end {
+  justify-content: flex-end;
+}
+.column {
+  flex-direction: column;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+button {
+  position: relative;
+  width: 100%;
+  background: var(--theme);
+  border-radius: var(--round-radius);
+  color: var(--black);
+  padding: var(--btn-padding);
+  font-weight: var(--bold);
+  font-family: 'Abyssinica SIL', serif;
+  letter-spacing: 0.25px;
+  overflow: hidden;
+  border: none;
+  box-shadow: var(--drop-shadow-low);
+  opacity: var(--subtle-opacity);
+  margin: var(--spacing-base) 0;
+  transition: all var(--transition-duration) ease;
+  cursor: pointer;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-touch-callout: none;
+}
+button:hover, button.active {
+  opacity: 1;
+  box-shadow: var(--drop-shadow);
+}
+button:active {
+  background: var(--theme-2);
+  box-shadow: var(--drop-shadow-low);
+  transition-duration: var(--transition-duration-short);
+}
+button.full-width {
+  width: calc(100% - (var(--spacing-sm) * 2));
+  margin: 0 var(--spacing-sm);
+}
+.icon-btn {
+  font-size: var(--font-base);
+  width: 40px;
+  height: 40px;
+}
+.icon-btn i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-shadow: var(--text-shadow);
+  z-index: 100;
+}
+.secondary-btn {
+  background: unset;
+}
+.secondary-btn:hover {
+  background: var(--modal-bg) !important;
+}
+.link-btn {
+  color: var(--theme);
+  letter-spacing: 0.25px;
+  font-size: var(--font-sm);
+  font-family: 'Abyssinica SIL', serif;
+  cursor: pointer;
+}
+.link-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.link-btn:active {
+  opacity: var(--subtle-opacity)
+}
+.error-btn {
+  background: var(--danger);
+}
+
+/* Input */
+.input-group {
+  position: relative;
+  margin: var(--spacing-sm) 0;
+}
+input {
+  width: calc(100% - ((var(--spacing-lg) + 2px) * 2));
+  outline: none;
+  background: transparent;
+  padding: var(--spacing-base) var(--spacing-lg);
+  border-radius: var(--round-radius);
+  color: var(--secondary);
+  border: 2px solid var(--theme);
+  margin: unset;
+}
+.placeholder {
+  position: absolute;
+  top: 10px;
+  left: 8px;
+  font-size: 14px;
+  padding: 0px 10px;
+  color: var(--theme);
+  transition: all var(--transition-duration-short) ease;
+  pointer-events: none;
+}
+.input-group input:focus + .placeholder,
+.input-group.has-value .placeholder {
+  top: -7px;
+  background-color: var(--black);
+}
+.input-group:hover i,
+.input-group.has-value i {
+  opacity: var(--subtle-opacity);
+}
+.input-group i {
+  position: absolute;
+  top: 50%;
+  right: var(--spacing-lg);
+  transform: translateY(-50%);
+  opacity: 0;
+  color: var(--white);
+  font-size: var(--font-sm);
+  transition: all var(--transition-duration) ease;
+  cursor: pointer;
+}
+.input-group i:hover, .input-group i.active {
+  opacity: 1;
+}
+
+/* Spinning loader */
+.spinner {
+  animation: spin 0.45s infinite ease-out;
+  margin-bottom: -5px;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg) }
+  100% { transform: rotate(360deg) }
+}
+
+/* Ethier Components */
+.ethier-btn {
+  width: unset;
+  margin: unset;
+  background: var(--theme);
+  color: var(--black);
+  font-size: var(--font-base);
+  font-family: 'Quicksand', sans-serif !important;
+}
+
+.ethier-modal {
+  position: absolute;
+  width: 95%;
+  max-width: 200px;
+  height: 100%;
+  max-height: 300px;
+  box-shadow: var(--drop-shadow);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  background: var(--black);
+  color: var(--white);
+  font-size: var(--font-base);
+  font-family: 'Quicksand', sans-serif !important;
+}
+.ethier-modal-page {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 50px;
+}
+.ethier-modal-tabs {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 50px;
+}
+.ethier-modal-tabs-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25%;
+  height: 2px;
+  background: var(--theme);
+  transition: all var(--transition-duration-short) ease-out;
+}
+.ethier-modal-tabs-tab {
+  width: 25%;
+  font-size: var(--font-lg);
+  opacity: var(--disabled-opacity);
+  transition: all var(--transition-duration-short) ease;
+  cursor: pointer;
+}
+.ethier-modal-tabs-tab:hover {
+  opacity: 1;
+}
+.ethier-modal-tabs-tab:hover {
+  opacity: var(--subtle-opacity);
+}
+.ethier-modal-tabs-tab.active {
+  opacity: 1;
+  color: var(--theme);
+}
