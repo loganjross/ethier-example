@@ -22,11 +22,13 @@ interface Firebase {
     email: string,
     password: string,
     creatingAccount: boolean
-  ) => Promise<boolean>;
+  ) => Promise<string>;
+  signOutOrDeleteAccount: (deleteAccount?: boolean) => Promise<void>;
 }
 const FirebaseContext = createContext<Firebase>({
   user: null,
-  createAccountOrSignIn: async () => false,
+  createAccountOrSignIn: async () => '',
+  signOutOrDeleteAccount: async () => {},
 });
 
 // Firebase context provider
@@ -47,10 +49,21 @@ export function FirebaseProvider(props: { children: any }) {
 
       setUser(user);
       setCurrentPage(user.providerId ? 'balances' : 'login');
-      return true;
+      return '';
+    } catch (err: any) {
+      console.error(err);
+      return err.toString();
+    }
+  }
+
+  // Sign user out or delete their account
+  async function signOutOrDeleteAccount(deleteAccount?: boolean) {
+    try {
+      deleteAccount && user ? await user.delete() : await auth.signOut();
+      setUser(null);
+      setCurrentPage('login');
     } catch (err) {
       console.error(err);
-      return false;
     }
   }
 
@@ -59,6 +72,7 @@ export function FirebaseProvider(props: { children: any }) {
       value={{
         user,
         createAccountOrSignIn,
+        signOutOrDeleteAccount,
       }}
     >
       {props.children}

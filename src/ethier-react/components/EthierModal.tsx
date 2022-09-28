@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { ModalPage, modalTabsPages, useModal } from '../contexts/modal';
+import { useFirebase } from '../contexts/firebase';
 import { LoginPage } from './pages/LoginPage';
 import { BalancesPage } from './pages/BalancesPage';
 import { NftsPage } from './pages/NftsPage';
 import { TransferPage } from './pages/TransferPage';
 import { SettingsPage } from './pages/SettingsPage';
 
-// Main Ethier component
+// Main Ethier modal component
 export function EthierModal() {
+  const { user } = useFirebase();
   const button: HTMLElement | null = document.querySelector('.ethier-btn');
   const { modalOpen, currentPage, setCurrentPage } = useModal();
   const [offset, setOffset] = useState<{ right: number; top: number }>({
@@ -88,7 +90,7 @@ export function EthierModal() {
         className='ethier-modal flex-centered column'
         style={{
           right: `calc(100vw - ${offset.right}px)`,
-          top: offset.top + 45,
+          top: offset.top + 50,
         }}
       >
         {renderCurrentPage()}
@@ -96,7 +98,7 @@ export function EthierModal() {
           {modalTabsPages.map((page) => (
             <div
               key={page}
-              onClick={() => setCurrentPage(page)}
+              onClick={() => (user ? setCurrentPage(page) : null)}
               className={`ethier-modal-tabs-tab flex-centered ${
                 currentPage === page ? 'active' : ''
               }`}

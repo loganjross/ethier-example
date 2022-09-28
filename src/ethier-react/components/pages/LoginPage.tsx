@@ -22,18 +22,23 @@ export function LoginPage() {
     } else if (password.length < 6) {
       error = 'Use a longer password';
     }
-    if (error) {
+    if (error.length) {
       setError(error);
       return;
     }
 
+    // If no error, submit auth to firebase
     setLoading(true);
-    const success = await createAccountOrSignIn(
-      email,
-      password,
-      creatingAccount
-    );
-    if (!success) setError('An error occurred');
+    const resp = await createAccountOrSignIn(email, password, creatingAccount);
+    if (resp.includes('wrong-password')) {
+      setError('Incorrect password');
+    } else if (resp.includes('already-in-use')) {
+      setError('Email already in use');
+    } else if (resp.includes('not-found')) {
+      setError('No account found');
+    } else if (resp.length) {
+      setError('An error occurred');
+    }
     setLoading(false);
   }
 
@@ -41,7 +46,7 @@ export function LoginPage() {
     <div className='ethier-modal-page flex-centered column'>
       <h1 className='brand-text'>{creatingAccount ? 'Sign Up' : 'Ethier'}</h1>
       <span className='desc-text' style={{ margin: '-6px 0 10px 0' }}>
-        {creatingAccount ? '' : 'An easy way to use Ethereum.'}
+        {!creatingAccount && 'An easier way to use Ethereum.'}
       </span>
       <div className={`input-group ${email.length ? 'has-value' : ''}`}>
         <input
@@ -74,7 +79,7 @@ export function LoginPage() {
         ) : error.length ? (
           error
         ) : creatingAccount ? (
-          'Create Account'
+          'Create'
         ) : (
           'Login'
         )}
@@ -83,7 +88,7 @@ export function LoginPage() {
         className='link-btn'
         onClick={() => setCreatingAccount(!creatingAccount)}
       >
-        {creatingAccount ? 'Already a user?' : 'Create account'}
+        {creatingAccount ? 'Already a user?' : 'Create Account'}
       </span>
     </div>
   );

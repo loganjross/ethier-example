@@ -1,3 +1,3 @@
 #Ethier
 
-An easy way to use Ethereum.
+An easier way to use Ethereum.

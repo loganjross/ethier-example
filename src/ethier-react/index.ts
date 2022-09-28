@@ -1,2 +1,2 @@
-export * from './EthierReact';
+export * from './EthierProvider';
 export * from './components/EthierButton';
