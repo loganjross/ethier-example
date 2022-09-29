@@ -1,8 +1,9 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from "react";
 
 // Token prices context
-export type Token = 'ETH' | 'USDC' | 'UNI' | 'wBTC';
-export const tokenOptions: Token[] = ['ETH', 'USDC', 'UNI', 'wBTC'];
+export type NonEthToken = "USDC" | "UNI" | "wBTC";
+export const nonEthTokenOptions: NonEthToken[] = ["USDC", "UNI", "wBTC"];
+export type Token = NonEthToken | "ETH";
 const TokenPricesContext = createContext<{
   tokenPrices: Record<Token, number>;
 }>({
@@ -16,7 +17,8 @@ export function TokenPricesProvider(props: { children: any }) {
   // Fetch prices on mount
   useEffect(() => {
     const tokenPrices = {} as Record<Token, number>;
-    tokenOptions.forEach(async (token: Token) => {
+    const tokens: Token[] = ["ETH", "USDC", "UNI", "wBTC"];
+    tokens.forEach(async (token) => {
       const resp = await fetch(
         `https://min-api.cryptocompare.com/data/price?fsym=${token}&tsyms=USD`
       );
