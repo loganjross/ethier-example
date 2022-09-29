@@ -142,7 +142,7 @@ export function TransferPage() {
         </div>
         <div
           className='flex-centered'
-          style={{ marginTop: 'var(--spacing-base)' }}
+          style={{ marginTop: 'var(--spacing-sm)' }}
         >
           <i className='fa-solid fa-fire-flame-curved'></i>&nbsp;≈&nbsp;{gas}
           &nbsp;ETH

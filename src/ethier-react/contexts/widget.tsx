@@ -1,15 +1,9 @@
 import { createContext, useContext, useState } from 'react';
 
 // Widget state context
-export type WidgetPage =
-  | 'login'
-  | 'balances'
-  | 'nfts'
-  | 'transfer'
-  | 'settings';
+export type WidgetPage = 'login' | 'balances' | 'transfer' | 'settings';
 export const widgetTabsPages: WidgetPage[] = [
   'balances',
-  'nfts',
   'transfer',
   'settings',
 ];

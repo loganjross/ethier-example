@@ -4,7 +4,6 @@ import { useEthier, useUser } from '../contexts/ethier';
 import { formatPubkey } from '../util/format';
 import { LoginPage } from './pages/LoginPage';
 import { BalancesPage } from './pages/BalancesPage';
-import { NftsPage } from './pages/NftsPage';
 import { TransferPage } from './pages/TransferPage';
 import { SettingsPage } from './pages/SettingsPage';
 
@@ -38,8 +37,6 @@ export function EthierWidget() {
     switch (currentPage) {
       case 'balances':
         return <BalancesPage />;
-      case 'nfts':
-        return <NftsPage />;
       case 'transfer':
         return <TransferPage />;
       case 'settings':
@@ -56,9 +53,6 @@ export function EthierWidget() {
       case 'balances':
         suffix = 'circle-dollar-to-slot';
         break;
-      case 'nfts':
-        suffix = 'images';
-        break;
       case 'transfer':
         suffix = 'paper-plane';
         break;
@@ -72,12 +66,10 @@ export function EthierWidget() {
   // Returns styling position for tab border
   function getBorderPosition() {
     switch (currentPage) {
-      case 'nfts':
-        return '25%';
       case 'transfer':
-        return '50%';
+        return '33.333%';
       case 'settings':
-        return '75%';
+        return '66.666%';
       default:
         return '0';
     }
@@ -121,7 +113,7 @@ export function EthierWidget() {
                 className='ethier-widget-tabs-border'
                 style={{
                   left: getBorderPosition(),
-                  width: currentPage === 'login' ? '100%' : '25%',
+                  width: currentPage === 'login' ? '100%' : '33.333%',
                 }}
               ></div>
               {getPageIcon(page)}

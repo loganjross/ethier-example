@@ -303,13 +303,13 @@ select {
   position: absolute;
   top: 0;
   left: 0;
-  width: 25%;
+  width: 33.333%;
   height: 2px;
   background: var(--theme);
   transition: all var(--transition-duration-short) ease-out;
 }
 .ethier-widget-tabs-tab {
-  width: 25%;
+  width: 33.333%;
   font-size: var(--font-lg);
   opacity: var(--disabled-opacity);
   transition: all var(--transition-duration-short) ease;

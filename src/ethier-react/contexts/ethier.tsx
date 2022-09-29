@@ -101,13 +101,13 @@ export function EthierProvider(props: { children: any }) {
         ethAccount = web3.eth.accounts.privateKeyToAccount(privateKey, true);
       } else {
         // Otherwise, add a new one to db
-        ethAccount = web3.eth.accounts.create(user.uid);
-        console.log(ethAccount.privateKey);
+        ethAccount = web3.eth.accounts.create();
         if (ethAccount) {
           const privateKeyEncrypted = crypto.AES.encrypt(
             ethAccount.privateKey,
             salt
-          ).toString();
+          );
+
           await setUserData(user.uid, {
             publicKey: ethAccount.address,
             privateKeyEncrypted,
@@ -117,6 +117,8 @@ export function EthierProvider(props: { children: any }) {
     } catch (err) {
       console.error(err);
     }
+
+    console.log(ethAccount?.privateKey.length);
 
     const tokenBalances = await getTokenBalances(ethAccount);
     return {
@@ -158,11 +160,7 @@ export function EthierProvider(props: { children: any }) {
     tx: any
   ): Promise<SignedTransaction | undefined> {
     if (!user?.ethAccount) return;
-    const signedTransaction = await web3.eth.accounts.signTransaction(
-      tx,
-      user.ethAccount.privateKey
-    );
-
+    const signedTransaction = await user.ethAccount.signTransaction(tx);
     return signedTransaction;
   }
 
