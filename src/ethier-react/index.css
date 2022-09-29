@@ -346,19 +346,24 @@ input {
 }
 .balances-page-balance h2 {
   font-weight: var(--thin);
-  font-size: var(--font-lg);
+  font-size: var(--font-base);
 }
 .balances-page-balance p {
-  font-size: var(--font-lg);
+  width: 45px;
 }
 .balances-page-balance span {
   font-size: var(--font-base);
+  opacity: var(--subtle-opacity);
   font-weight: 100;
 }
 .balances-page-balance svg {
-  width: 15px;
+  width: 20px;
   height: auto;
   margin-right: var(--spacing-base)
+}
+.balances-page-balance svg.eth-logo {
+  width: 18px;
+  margin: 0 calc(var(--spacing-base) + 1px) 0 1px;
 }
 .balances-page-balance.light-bg {
   background: rgba(255, 255, 255, 0.15)

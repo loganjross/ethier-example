@@ -2,6 +2,8 @@ import { useWidget } from '../../contexts/widget';
 import { useUser } from '../../contexts/ethier';
 import { Token, useTokenPrices } from '../../contexts/tokenPrices';
 import { ReactComponent as EthLogo } from '../../assets/tokens/eth.svg';
+import { ReactComponent as UsdtLogo } from '../../assets/tokens/usdt.svg';
+import { ReactComponent as UniLogo } from '../../assets/tokens/uni.svg';
 import { useCurrencyFormatting } from '../../util/format';
 
 export function BalancesPage() {
@@ -26,7 +28,11 @@ export function BalancesPage() {
   function getAssetLogo(symbol: string): JSX.Element {
     switch (symbol) {
       case 'ETH':
-        return <EthLogo />;
+        return <EthLogo className='eth-logo' />;
+      case 'USDT':
+        return <UsdtLogo />;
+      case 'UNI':
+        return <UniLogo />;
       default:
         return <></>;
     }
@@ -34,7 +40,7 @@ export function BalancesPage() {
 
   if (user) {
     return (
-      <div className='ethier-widget-page balances-page flex-centered column'>
+      <div className='ethier-widget-page balances-page flex align-center justify-end column'>
         <h1 className='total-value'>{currencyAbbrev(getTotalValue(), true)}</h1>
         <div className='flex-centered'>
           <button>Buy</button>
@@ -50,15 +56,13 @@ export function BalancesPage() {
             >
               <div className='balances-page-token flex-centered'>
                 {getAssetLogo(token)}
-                <div className='flex-centered'>
-                  <p>{token}</p>
-                  <span>
-                    &nbsp;&nbsp;
-                    {currencyFormatter(tokenPrices[token as Token], true)}
-                  </span>
-                </div>
+                <span>
+                  {currencyFormatter(tokenPrices[token as Token], true)}
+                </span>
               </div>
-              <h2>{user.tokenBalances[token as Token]}</h2>
+              <h2>
+                {user.tokenBalances[token as Token]} {token}
+              </h2>
             </div>
           ))}
         </div>

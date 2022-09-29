@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import crypto from 'crypto-js';
 import { Account as EthAccount, SignedTransaction } from 'web3-core';
-import { web3, tokenContracts, CONNECTION_REFRESH } from '../util/connection';
+import { web3, tokenContracts, CONNECTION_REFRESH } from '../util/web3';
 import { User as FirebaseUser } from 'firebase/auth';
 import {
   createFirebaseUser,
@@ -11,7 +11,7 @@ import {
   logoutFirebaseUser,
   setUserData,
 } from '../util/firebase';
-import { nonEthTokenOptions, Token } from './tokenPrices';
+import { nonEthTokens, Token } from './tokenPrices';
 import { useWidget } from './widget';
 
 // Ethier context
@@ -140,14 +140,16 @@ export function EthierProvider(props: { children: any }) {
       tokenBalances.ETH = parseFloat(ethBalance);
 
       // Get non-Eth balances
-      nonEthTokenOptions.forEach(async (token) => {
-        const weiBalance = await tokenContracts[token].methods.getBalance(
-          ethAccount.address
-        );
+      for (const token of nonEthTokens) {
+        console.log(token);
+        const weiBalance = await tokenContracts[token].methods
+          .balanceOf(ethAccount.address)
+          .call();
         const balance = web3.utils.fromWei(weiBalance);
         tokenBalances[token] = parseFloat(balance);
-      });
+      }
     }
+
     return tokenBalances;
   }
 
