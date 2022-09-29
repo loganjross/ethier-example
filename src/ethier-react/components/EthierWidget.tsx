@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { WidgetPage, widgetTabsPages, useWidget } from '../contexts/widget';
-import { useEthier } from '../contexts/ethier';
+import { useEthier, useUser } from '../contexts/ethier';
+import { formatPubkey } from '../util/format';
 import { LoginPage } from './pages/LoginPage';
 import { BalancesPage } from './pages/BalancesPage';
 import { NftsPage } from './pages/NftsPage';
@@ -12,6 +13,8 @@ export function EthierWidget() {
   const { widgetOpen, toggleWidgetOpen, currentPage, setCurrentPage } =
     useWidget();
   const { isLoggedIn } = useEthier();
+  const { user } = useUser();
+  const pubkey = user?.ethAccount?.address ?? '';
   const button: HTMLElement | null = document.querySelector('.ethier-btn');
   const [offset, setOffset] = useState<{ right: number; top: number }>({
     right: 0,
@@ -88,6 +91,15 @@ export function EthierWidget() {
           top: offset.top + 50,
         }}
       >
+        {pubkey && (
+          <div
+            className='ethier-widget-pubkey-copy flex-centered'
+            onClick={() => navigator.clipboard.writeText(pubkey)}
+          >
+            <p>{formatPubkey(pubkey)}</p>
+            <i className='fa-solid fa-copy'></i>
+          </div>
+        )}
         <div
           className='ethier-widget-close flex-centered'
           onClick={toggleWidgetOpen}

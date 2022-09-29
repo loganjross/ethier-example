@@ -43,7 +43,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className='ethier-widget-page flex-centered column'>
+    <div className='ethier-widget-page login-page flex-centered column'>
       <h1 className='brand-text'>{creatingAccount ? 'Sign Up' : 'Ethier'}</h1>
       <span className='desc-text' style={{ margin: '-6px 0 10px 0' }}>
         {!creatingAccount && 'An easier way to use Ethereum.'}

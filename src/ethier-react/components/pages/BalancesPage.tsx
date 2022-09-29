@@ -2,12 +2,11 @@ import { useWidget } from '../../contexts/widget';
 import { useUser } from '../../contexts/ethier';
 import { Token, useTokenPrices } from '../../contexts/tokenPrices';
 import { ReactComponent as EthLogo } from '../../assets/tokens/eth.svg';
-import { formatPubkey, useCurrencyFormatting } from '../../util/format';
+import { useCurrencyFormatting } from '../../util/format';
 
 export function BalancesPage() {
   const { setCurrentPage } = useWidget();
   const { user } = useUser();
-  const pubkey = user?.ethAccount?.address ?? '';
   const tokenPrices = useTokenPrices();
   const { currencyAbbrev, currencyFormatter } = useCurrencyFormatting();
 
@@ -36,13 +35,6 @@ export function BalancesPage() {
   if (user) {
     return (
       <div className='ethier-widget-page balances-page flex-centered column'>
-        <div className='pubkey-copy flex-centered'>
-          <p>{formatPubkey(pubkey)}</p>
-          <i
-            className='fa-solid fa-copy'
-            onClick={() => navigator.clipboard.writeText(pubkey)}
-          ></i>
-        </div>
         <h1 className='total-value'>{currencyAbbrev(getTotalValue(), true)}</h1>
         <div className='flex-centered'>
           <button>Buy</button>
@@ -61,7 +53,7 @@ export function BalancesPage() {
                 <div className='flex-centered'>
                   <p>{token}</p>
                   <span>
-                    &nbsp;&#183;&nbsp;
+                    &nbsp;&nbsp;
                     {currencyFormatter(tokenPrices[token as Token], true)}
                   </span>
                 </div>
