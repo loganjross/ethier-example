@@ -3,8 +3,9 @@ import { Contract } from "web3-eth-contract";
 import { Token } from "../contexts/tokenPrices";
 
 // Web3
+export const CONNECTION_REFRESH = 10000;
 const endpoint =
-  "https://ropsten.infura.io/v3/b8e513d193714353a389314c169aed39";
+  "https://mainnet.infura.io/v3/b8e513d193714353a389314c169aed39";
 const provider = new Web3.providers.HttpProvider(endpoint);
 export const web3 = new Web3(provider);
 

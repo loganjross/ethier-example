@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import crypto from 'crypto-js';
 import { Account as EthAccount, SignedTransaction } from 'web3-core';
-import { web3, tokenContracts } from '../util/connection';
+import { web3, tokenContracts, CONNECTION_REFRESH } from '../util/connection';
 import { User as FirebaseUser } from 'firebase/auth';
 import {
   createFirebaseUser,
@@ -17,8 +17,8 @@ import { useWidget } from './widget';
 // Ethier context
 export interface EthierUser {
   ethAccount: EthAccount | null;
-  tokenBalances: Record<string, number>;
-  username: string | null;
+  tokenBalances: Record<Token, number>;
+  email: string | null;
   firebaseId: string;
   deleteFirebase: () => Promise<void>;
 }
@@ -91,7 +91,6 @@ export function EthierProvider(props: { children: any }) {
     salt: string
   ): Promise<EthierUser> {
     let ethAccount: EthAccount | null = null;
-    let tokenBalances: Record<string, number> = {};
 
     try {
       // Check for keypair in db
@@ -114,7 +113,27 @@ export function EthierProvider(props: { children: any }) {
           });
         }
       }
+    } catch (err) {
+      console.error(err);
+    }
 
+    const tokenBalances = await getTokenBalances(ethAccount);
+    return {
+      ethAccount,
+      tokenBalances,
+      email: user.displayName ?? user.email,
+      firebaseId: user.uid,
+      deleteFirebase: user.delete,
+    };
+  }
+
+  // Get token balances for user
+  async function getTokenBalances(
+    ethAccount: EthAccount | null
+  ): Promise<Record<string, number>> {
+    let tokenBalances: Record<string, number> = {};
+
+    if (ethAccount) {
       // Get ETH balance
       const weiBalance = await web3.eth.getBalance(ethAccount?.address);
       const ethBalance = web3.utils.fromWei(weiBalance);
@@ -122,25 +141,14 @@ export function EthierProvider(props: { children: any }) {
 
       // Get non-Eth balances
       nonEthTokenOptions.forEach(async (token) => {
-        if (!ethAccount) return;
-
         const weiBalance = await tokenContracts[token].methods.getBalance(
           ethAccount.address
         );
         const balance = web3.utils.fromWei(weiBalance);
         tokenBalances[token] = parseFloat(balance);
       });
-    } catch (err) {
-      console.error(err);
     }
-
-    return {
-      ethAccount,
-      tokenBalances,
-      username: user.displayName ?? user.email,
-      firebaseId: user.uid,
-      deleteFirebase: user.delete,
-    };
+    return tokenBalances;
   }
 
   // Sign a transaction
@@ -180,6 +188,23 @@ export function EthierProvider(props: { children: any }) {
     }
   }
 
+  // Once we login, continually refresh account data
+  useEffect(() => {
+    if (!user) return;
+
+    // Token balances
+    const balancesInterval = setInterval(
+      () =>
+        getTokenBalances(user.ethAccount).then((tokenBalances) => {
+          user.tokenBalances = tokenBalances;
+          setUser({ ...user });
+        }),
+      CONNECTION_REFRESH
+    );
+    return () => clearInterval(balancesInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.ethAccount?.address]);
+
   return (
     <EthierContext.Provider
       value={{
@@ -211,6 +236,7 @@ export function useUser() {
 // Ethier context hook (client)
 export function useEthier() {
   const { setWidgetOpen, setCurrentPage } = useWidget();
+  const { deleteAccountOrLogout } = useUser();
   const { user, signTransaction, signAndSendTransaction } =
     useContext(EthierContext);
   return {
@@ -220,7 +246,8 @@ export function useEthier() {
       setCurrentPage('login');
       setWidgetOpen(true);
     },
-    username: user?.username,
+    logout: () => deleteAccountOrLogout(false),
+    email: user?.email,
     getTokenBalance: (tokenSymbol: Token) => user?.tokenBalances[tokenSymbol],
     signTransaction,
     signAndSendTransaction,

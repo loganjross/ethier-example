@@ -19,15 +19,17 @@
   --spacing-lg: 18px;
   --spacing-xl: 25px;
 
+  --font-sm: 12px;
   --font-base: 15px;
   --font-lg: 20px;
+  --font-xl: 50px;
   --bold: 800;
-  --thin: 200;
+  --thin: 400;
 
   --border-radius: 14px;
   --round-radius: 50px;
 
-  --disabled-opacity: 0.5;
+  --disabled-opacity: 0.65;
   --subtle-opacity: 0.85;
 
   --drop-shadow-low: 0px 6px 25px -12px #000;
@@ -103,7 +105,6 @@ h1, h2, p, span, a {
 /* Buttons */
 button {
   position: relative;
-  width: 100%;
   background: var(--theme);
   border-radius: var(--round-radius);
   color: var(--black);
@@ -131,8 +132,7 @@ button:active {
   transition-duration: var(--transition-duration-short);
 }
 button.full-width {
-  width: calc(100% - (var(--spacing-sm) * 2));
-  margin: 0 var(--spacing-sm);
+  width: 100%;
 }
 .icon-btn {
   font-size: var(--font-base);
@@ -229,7 +229,6 @@ input {
 
 /* Ethier Components */
 .ethier-btn {
-  width: unset;
   margin: unset;
   font-size: var(--font-lg);
   text-transform: unset;
@@ -243,11 +242,10 @@ input {
 .ethier-widget {
   position: absolute;
   width: 95%;
-  max-width: 275px;
+  max-width: 300px;
   height: 100%;
   max-height: 375px;
   box-shadow: var(--drop-shadow);
-  padding: 0 var(--spacing-lg);
   border-radius: var(--border-radius);
   background: var(--black);
   color: var(--white);
@@ -308,5 +306,55 @@ input {
 
 /* Balances page */
 .balances-page button {
-  margin: var(--spacing-lg);
+  margin: var(--spacing-sm) var(--spacing-sm) var(--spacing-lg) var(--spacing-sm);
+}
+.pubkey-copy {
+  position: absolute;
+  top: var(--spacing-lg);
+  lefT: 50%;
+  transform: translateX(-50%);
+}
+.pubkey-copy p {
+  opacity: var(--subtle-opacity);
+}
+.pubkey-copy i {
+  opacity: var(--disabled-opacity);
+  cursor: pointer;
+  margin-left: var(--spacing-base);
+  transition: all var(--transition-duration) ease;
+}
+.pubkey-copy i:hover {
+  opacity: 1;
+}
+.pubkey-copy i:active {
+  opacity: var(--subtle-opacity);
+  transition: unset;
+}
+.total-value {
+  font-size: var(--font-xl);
+  font-weight: var(--thin);
+}
+.balances-page-balances {
+  width: 100%
+}
+.balances-page-balance {
+  width: calc(100% - (var(--spacing-lg) * 2));
+  padding: var(--spacing-base) var(--spacing-lg);
+}
+.balances-page-balance h2 {
+  font-weight: var(--thin);
+  font-size: var(--font-lg);
+}
+.balances-page-balance span {
+  font-style: italic;
+  font-size: var(--font-sm);
+  font-weight: 100;
+}
+.balances-page-balance svg {
+  width: 15px;
+  height: auto;
+  margin-right: var(--spacing-base)
+}
+.balances-page-balance.light-bg {
+  background: rgba(255, 255, 255, 0.15)
 }

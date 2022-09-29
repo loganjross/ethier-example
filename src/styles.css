@@ -88,6 +88,21 @@ h1, h2, p, span, a {
   width: 80%;
   height: 200px;
 }
+.example-box-data {
+  width: 95%;
+  max-width: 250px;
+  margin-bottom: 10px;
+}
+.example-box-data-item {
+  width: 100%;
+  margin: 5px 0;
+}
+.example-box p {
+  font-weight: bold;
+}
+.example-box b {
+  opacity: 0.7
+}
 .btn {
   background: var(--dark-grey);
   padding: 7px 20px;

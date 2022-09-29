@@ -8,7 +8,7 @@ import { EthierReact, EthierButton, useEthier } from './ethier-react';
 const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <StrictMode>
-    {/* Wrap your app in the provider */}
+    {/* Wrap your dApp in the provider */}
     <EthierReact>
       <ExampleDapp />
     </EthierReact>
@@ -28,24 +28,33 @@ function ExampleDapp() {
           <Wireframe height={10} width={50} />
           <Wireframe height={10} width={50} />
         </div>
-        {/* Place the EthierButton anywhere in app */}
+        {/* Place the EthierButton anywhere in dApp */}
         <EthierButton />
       </div>
       <div className='view flex-centered column'>
-        <div className='example-box flex-centered'>
-          {ethier.isLoggedIn ? (
-            <p>Username: {ethier.username}</p>
-          ) : (
-            <span className='btn' onClick={ethier.promptLogin}>
-              Connect with Ethier
-            </span>
+        <div className='example-box flex-centered column'>
+          {ethier.isLoggedIn && (
+            <div className='example-box-data'>
+              <div className='example-box-data-item flex align-center justify-between'>
+                <b>EMAIL</b>
+                <p>{ethier.email}</p>
+              </div>
+              <div className='example-box-data-item flex align-center justify-between'>
+                <b>BALANCE</b>
+                <p>{ethier.getTokenBalance('ETH')} ETH</p>
+              </div>
+            </div>
           )}
+          <span
+            className='btn'
+            onClick={ethier.isLoggedIn ? ethier.logout : ethier.promptLogin}
+          >
+            {ethier.isLoggedIn
+              ? 'Disconnect from Ethier'
+              : 'Connect with Ethier'}
+          </span>
         </div>
         <Wireframe height={150} width='80%' />
-        <div className='flex-centered'>
-          <Wireframe height={200} width={408} />
-          <Wireframe height={200} width={408} />
-        </div>
       </div>
     </div>
   );

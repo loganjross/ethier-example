@@ -71,7 +71,7 @@ export function LoginPage() {
         ></i>
       </div>
       <button
-        className={error.length && !loading ? 'error-btn' : ''}
+        className={`full-width ${error.length && !loading ? 'error-btn' : ''}`}
         onClick={submit}
       >
         {loading ? (
