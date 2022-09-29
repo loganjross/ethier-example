@@ -6,11 +6,11 @@ import { ReactComponent as UniLogo } from '../assets/tokens/uni.svg';
 export function TokenLogo(props: { token: Token }) {
   switch (props.token) {
     case 'ETH':
-      return <EthLogo className='eth-logo' />;
+      return <EthLogo className='token-logo eth-logo' />;
     case 'USDT':
-      return <UsdtLogo />;
+      return <UsdtLogo className='token-logo eth-logo' />;
     case 'UNI':
-      return <UniLogo />;
+      return <UniLogo className='token-logo eth-logo' />;
     default:
       return <></>;
   }

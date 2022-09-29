@@ -30,7 +30,8 @@ export function EthierWidget() {
       right: buttonRect.right,
       top: buttonRect.top,
     });
-  }, [button]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [button, window.innerWidth, window.innerHeight]);
 
   // Return the current widget page
   function renderCurrentPage(): JSX.Element {

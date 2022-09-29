@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import BN from 'bn.js';
 import { useEthier, useUser } from '../../contexts/ethier';
 import { Token, useTokenPrices } from '../../contexts/tokenPrices';
 import { getTransferTransaction, web3 } from '../../util/web3';
@@ -14,6 +15,8 @@ export function TransferPage() {
   const [token, setToken] = useState<Token>('ETH');
   const [amountString, setAmountString] = useState('');
   const [toAccount, setToAccount] = useState('');
+  const invalidToAccount =
+    !toAccount.length || !web3.utils.isAddress(toAccount);
   const [gas, setGas] = useState(0);
   const [tx, setTx] = useState<any>();
   const [error, setError] = useState('');
@@ -26,7 +29,7 @@ export function TransferPage() {
     let error = '';
     if (!amountString.length || amountString === '0') {
       error = 'Enter an amount';
-    } else if (!toAccount.length || !web3.utils.isAddress(toAccount)) {
+    } else if (invalidToAccount) {
       error = 'Invalid destination address';
     }
     if (error) {
@@ -37,7 +40,7 @@ export function TransferPage() {
     // Send tx
     setLoading(true);
     const hash = await signAndSendTransaction(tx);
-    console.log(`tx success: ${hash}`);
+    console.log(`tx: ${hash}`);
     setLoading(false);
   }
 
@@ -53,7 +56,7 @@ export function TransferPage() {
 
   // Update tx as inputs change, and estimate gas
   useEffect(() => {
-    if (!user?.ethAccount) return;
+    if (!user?.ethAccount || invalidToAccount) return;
     const amount = getWithinMaxRange();
     setAmountString(amount.toString());
 
@@ -65,7 +68,9 @@ export function TransferPage() {
     ).then(async (tx) => {
       const gas = await web3.eth.estimateGas(tx);
       const gasPrice = await web3.eth.getGasPrice();
-      setGas(gas * parseFloat(gasPrice));
+      const gasBN = new BN(gas * parseFloat(gasPrice));
+      const gasNum = parseFloat(web3.utils.fromWei(gasBN));
+      setGas(gasNum);
       setTx(tx);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,8 +140,11 @@ export function TransferPage() {
           />
           <label className='placeholder'>To</label>
         </div>
-        <div className='flex-centered'>
-          <i className='fa-solid fa-fire-flame-simple'></i>&nbsp;≈&nbsp;{gas}
+        <div
+          className='flex-centered'
+          style={{ marginTop: 'var(--spacing-base)' }}
+        >
+          <i className='fa-solid fa-fire-flame-curved'></i>&nbsp;≈&nbsp;{gas}
           &nbsp;ETH
         </div>
         <button

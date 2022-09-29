@@ -5,6 +5,7 @@ import { Token } from "../contexts/tokenPrices";
 
 // Web3
 export const CONNECTION_REFRESH = 60000;
+export const WEI_PER_ETH = new BN('1000000000000000000');
 const endpoint =
   "https://mainnet.infura.io/v3/b8e513d193714353a389314c169aed39";
 const provider = new Web3.providers.HttpProvider(endpoint);
@@ -21,7 +22,7 @@ export const uniswapContract = new web3.eth.Contract(
 );
 export const tokenContracts: Record<string, Contract> = {
   USDT: usdtContract,
-  UNI: uniswapContract
+  UNI: uniswapContract,
 };
 
 // Transfer tokens to an Ethereum address
@@ -31,23 +32,24 @@ export async function getTransferTransaction(
   toAccount: string,
   amount: number
 ) {
+  const gasPrice = await web3.eth.getGasPrice();
   const nonce = await web3.eth.getTransactionCount(
     fromAccount,
     'latest'
   );
 
-  const tx = {
-    to: toAccount,
-    value: web3.utils.toWei(new BN(amount)).toString(),
-    gas: 30000,
-    maxFeePerGas: 1000000000,
-    nonce: nonce,
+  const weiString = (WEI_PER_ETH.muln(amount)).toString()
+  return {
+    to: toAccount, 
+    value: weiString, 
+    gas: '2000000',
+    gasPrice,
+    nonce,
     data:
       token !== 'ETH'
         ? tokenContracts[token].methods
-            .transfer(fromAccount, toAccount, amount)
+            .transfer(fromAccount, toAccount, weiString)
             .encodeABI()
         : undefined,
-  };
-  return tx;
+  }
 }

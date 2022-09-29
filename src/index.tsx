@@ -21,28 +21,32 @@ function ExampleDapp() {
 
   return (
     <div>
-      <div className='navbar flex justify-between align-center'>
-        <Wireframe height={25} width={100} />
-        <div className='flex-centered desktop-only'>
-          <Wireframe height={10} width={50} />
-          <Wireframe height={10} width={50} />
-          <Wireframe height={10} width={50} />
+      <div className='navbar-container flex-centered'>
+        <div className='navbar flex justify-between align-center'>
+          <Wireframe height={25} width={100} />
+          <div className='flex-centered desktop-only'>
+            <Wireframe height={10} width={50} />
+            <Wireframe height={10} width={50} />
+            <Wireframe height={10} width={50} />
+          </div>
+          {/* Place the EthierButton anywhere in dApp */}
+          <EthierButton />
         </div>
-        {/* Place the EthierButton anywhere in dApp */}
-        <EthierButton />
       </div>
       <div className='view flex-centered column'>
         <div className='example-box flex-centered column'>
           {ethier.isLoggedIn && (
-            <div className='example-box-data'>
-              <div className='example-box-data-item flex align-center justify-between'>
-                <b>EMAIL</b>
-                <p>{ethier.email}</p>
-              </div>
-              <div className='example-box-data-item flex align-center justify-between'>
-                <b>BALANCE</b>
-                <p>{ethier.getTokenBalance('ETH')} ETH</p>
-              </div>
+            <div className='example-box-data flex-centered'>
+              <p className='user-email'>{ethier.email}</p>
+              {['ETH', 'USDT', 'UNI'].map((token) => (
+                <div
+                  key={token}
+                  className='example-box-data-item flex align-center justify-between'
+                >
+                  <b>{token}</b>
+                  <p>{ethier.getTokenBalance(token)}</p>
+                </div>
+              ))}
             </div>
           )}
           <span
@@ -55,6 +59,7 @@ function ExampleDapp() {
           </span>
         </div>
         <Wireframe height={150} width='80%' />
+        <Wireframe height={350} width='80%' />
       </div>
     </div>
   );

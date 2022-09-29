@@ -102,6 +102,7 @@ export function EthierProvider(props: { children: any }) {
       } else {
         // Otherwise, add a new one to db
         ethAccount = web3.eth.accounts.create(user.uid);
+        console.log(ethAccount.privateKey);
         if (ethAccount) {
           const privateKeyEncrypted = crypto.AES.encrypt(
             ethAccount.privateKey,
@@ -136,7 +137,7 @@ export function EthierProvider(props: { children: any }) {
     if (ethAccount) {
       // Get ETH balance
       const weiBalance = await web3.eth.getBalance(ethAccount?.address);
-      const ethBalance = web3.utils.fromWei(weiBalance);
+      const ethBalance = web3.utils.fromWei(weiBalance, 'ether');
       tokenBalances.ETH = parseFloat(ethBalance);
 
       // Get non-Eth balances
@@ -246,7 +247,8 @@ export function useEthier() {
     },
     logout: () => deleteAccountOrLogout(false),
     email: user?.email,
-    getTokenBalance: (tokenSymbol: Token) => user?.tokenBalances[tokenSymbol],
+    getTokenBalance: (tokenSymbol: string) =>
+      user?.tokenBalances[tokenSymbol as Token],
     signTransaction,
     signAndSendTransaction,
   };

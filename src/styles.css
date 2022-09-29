@@ -11,7 +11,7 @@ body {
   padding: 0;
   font-family: -apple-system, 'Helvetica Neue', sans-serif;
   background: #e0e0e0;
-  color: #323232;
+  color: #5c5c5c;
 }
 *:focus-visible {
   outline: 0;
@@ -69,11 +69,15 @@ h1, h2, p, span, a {
 }
 
 /* Navbar */
-.navbar {
+.navbar-container {
   width: calc(100% - 25px);
   background: var(--light-grey);
   padding: 10px;
   padding-right: 15px;
+}
+.navbar {
+  width: 100%;
+  max-width: 1200px;
 }
 .view {
   width: calc(100% - 40px);
@@ -83,6 +87,7 @@ h1, h2, p, span, a {
 .wireframe, .example-box {
   background: var(--grey);
   margin: 10px;
+  max-width: 1200px;
 }
 .example-box {
   width: 80%;
@@ -90,7 +95,7 @@ h1, h2, p, span, a {
 }
 .example-box-data {
   width: 95%;
-  max-width: 250px;
+  max-width: 200px;
   margin-bottom: 10px;
 }
 .example-box-data-item {
@@ -101,7 +106,12 @@ h1, h2, p, span, a {
   font-weight: bold;
 }
 .example-box b {
-  opacity: 0.7
+  opacity: 0.85
+}
+.user-email {
+  width: 100%;
+  border-bottom: 2px solid var(--dark-grey);
+  margin-bottom: 10px;
 }
 .btn {
   background: var(--dark-grey);

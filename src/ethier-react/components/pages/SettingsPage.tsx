@@ -1,10 +1,23 @@
+import { useState } from 'react';
 import { useUser } from '../../contexts/ethier';
 
 export function SettingsPage() {
   const { deleteAccountOrLogout } = useUser();
+  const [network, setNetwork] = useState('Mainnet');
 
   return (
-    <div className='ethier-widget-page flex-centered column'>
+    <div className='ethier-widget-page settings-page flex-centered column'>
+      <h1 className='brand-text'>Settings</h1>
+      <div className='settings-page-setting flex align-start justify-center column'>
+        <span>Network</span>
+        <select value={network} onChange={(e) => setNetwork(e.target.value)}>
+          {['Mainnet'].map((network) => (
+            <option key={network} value={network}>
+              {network}
+            </option>
+          ))}
+        </select>
+      </div>
       <button
         className='full-width error-btn'
         onClick={() => deleteAccountOrLogout(false)}

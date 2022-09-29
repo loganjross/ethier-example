@@ -24,7 +24,8 @@ export function BalancesPage() {
 
   if (user) {
     return (
-      <div className='ethier-widget-page balances-page flex align-center justify-end column'>
+      <div className='ethier-widget-page balances-page flex-centered column'>
+        <h1 className='brand-text'>Balances</h1>
         <h1 className='total-value'>{currencyAbbrev(getTotalValue(), true)}</h1>
         <div className='flex-centered'>
           <button>Buy</button>
@@ -40,13 +41,14 @@ export function BalancesPage() {
             >
               <div className='balances-page-token flex-centered'>
                 <TokenLogo token={token as Token} />
-                <span>
-                  {currencyFormatter(tokenPrices[token as Token], true)}
-                </span>
+                <div className='flex-centered'>
+                  <h2>{token}</h2>
+                  <span>
+                    {currencyFormatter(tokenPrices[token as Token], true)}
+                  </span>
+                </div>
               </div>
-              <h2>
-                {user.tokenBalances[token as Token]} {token}
-              </h2>
+              <h2>{user.tokenBalances[token as Token]}</h2>
             </div>
           ))}
         </div>
