@@ -1,5 +1,6 @@
 import { default as Web3 } from "web3";
 import { Contract } from "web3-eth-contract";
+import BN from 'bn.js';
 import { Token } from "../contexts/tokenPrices";
 
 // Web3
@@ -37,7 +38,7 @@ export async function getTransferTransaction(
 
   const tx = {
     to: toAccount,
-    value: amount,
+    value: web3.utils.toWei(new BN(amount)).toString(),
     gas: 30000,
     maxFeePerGas: 1000000000,
     nonce: nonce,

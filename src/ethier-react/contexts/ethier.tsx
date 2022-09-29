@@ -168,14 +168,11 @@ export function EthierProvider(props: { children: any }) {
   // Sign and send a transaction
   async function signAndSendTransaction(tx: any): Promise<string | undefined> {
     if (!user?.ethAccount) return;
-    const { rawTransaction } = await web3.eth.accounts.signTransaction(
-      tx,
-      user.ethAccount.privateKey
-    );
+    const signedTx = await signTransaction(tx);
 
-    if (rawTransaction) {
+    if (signedTx?.rawTransaction) {
       web3.eth.sendSignedTransaction(
-        rawTransaction,
+        signedTx.rawTransaction,
         (err: any, hash: string) => {
           if (err) {
             console.error(err);

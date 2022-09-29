@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useEthier, useUser } from '../../contexts/ethier';
 import { Token, useTokenPrices } from '../../contexts/tokenPrices';
 import { getTransferTransaction, web3 } from '../../util/web3';
@@ -14,19 +14,17 @@ export function TransferPage() {
   const [token, setToken] = useState<Token>('ETH');
   const [amountString, setAmountString] = useState('');
   const [toAccount, setToAccount] = useState('');
+  const [gas, setGas] = useState(0);
+  const [tx, setTx] = useState<any>();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Submit a token transfer
   async function submitTransfer() {
-    // Parse out input and keep within range
-    const amount = getWithinMaxRange();
-    setAmountString(amount.toString());
-
     // Check inputs
     if (!user?.ethAccount) return;
     let error = '';
-    if (!amount) {
+    if (!amountString.length || amountString === '0') {
       error = 'Enter an amount';
     } else if (!toAccount.length || !web3.utils.isAddress(toAccount)) {
       error = 'Invalid destination address';
@@ -38,12 +36,6 @@ export function TransferPage() {
 
     // Send tx
     setLoading(true);
-    const tx = await getTransferTransaction(
-      token,
-      user.ethAccount.address,
-      toAccount,
-      amount
-    );
     const hash = await signAndSendTransaction(tx);
     console.log(`tx success: ${hash}`);
     setLoading(false);
@@ -59,6 +51,26 @@ export function TransferPage() {
     return withinRange;
   }
 
+  // Update tx as inputs change, and estimate gas
+  useEffect(() => {
+    if (!user?.ethAccount) return;
+    const amount = getWithinMaxRange();
+    setAmountString(amount.toString());
+
+    getTransferTransaction(
+      token,
+      user.ethAccount.address,
+      toAccount,
+      amount
+    ).then(async (tx) => {
+      const gas = await web3.eth.estimateGas(tx);
+      const gasPrice = await web3.eth.getGasPrice();
+      setGas(gas * parseFloat(gasPrice));
+      setTx(tx);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [amountString, toAccount, token]);
+
   if (user) {
     return (
       <div className='ethier-widget-page transfer-page flex-centered column'>
@@ -69,7 +81,9 @@ export function TransferPage() {
             onChange={(e) => setToken(e.target.value as Token)}
           >
             {Object.keys(user.tokenBalances).map((token) => (
-              <option value={token}>{token}</option>
+              <option key={token} value={token}>
+                {token}
+              </option>
             ))}
           </select>
           <TokenLogo token={token as Token} />
@@ -79,7 +93,7 @@ export function TransferPage() {
         >
           <input
             type='text'
-            value={`${amountString} ${amountString.length ? token : ''}`}
+            value={amountString}
             onChange={(e) => {
               let inputString = e.target.value;
               // Check string value of input and adjust if necessary
@@ -109,7 +123,7 @@ export function TransferPage() {
           />
           <label className='placeholder'>Amount</label>
           <span className='price-estimation'>
-            ~{currencyFormatter(getWithinMaxRange() * tokenPrices[token], true)}
+            {currencyFormatter(getWithinMaxRange() * tokenPrices[token], true)}
           </span>
         </div>
         <div className={`input-group ${toAccount.length ? 'has-value' : ''}`}>
@@ -120,6 +134,10 @@ export function TransferPage() {
             onKeyUp={(e) => (e.code === 'Enter' ? submitTransfer() : null)}
           />
           <label className='placeholder'>To</label>
+        </div>
+        <div className='flex-centered'>
+          <i className='fa-solid fa-fire-flame-simple'></i>&nbsp;≈&nbsp;{gas}
+          &nbsp;ETH
         </div>
         <button
           className={`full-width ${
