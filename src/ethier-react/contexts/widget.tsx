@@ -45,10 +45,10 @@ export function WidgetStateProvider(props: { children: any }) {
 }
 
 // Widget context hook
-export const useWidget = () => {
+export function useWidget() {
   const context = useContext(WidgetStateContext);
   return {
     ...context,
     toggleWidgetOpen: () => context.setWidgetOpen(!context.widgetOpen),
   };
-};
+}

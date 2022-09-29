@@ -1,5 +1,6 @@
 import { default as Web3 } from "web3";
 import { Contract } from "web3-eth-contract";
+import { Token } from "../contexts/tokenPrices";
 
 // Web3
 const endpoint =
@@ -44,3 +45,31 @@ export const tokenContracts: Record<string, Contract> = {
   UNI: uniswapContract,
   wBTC: wrappedBtcContract,
 };
+
+// Transfer tokens to an Ethereum address
+  async function getTransferTransaction(
+    token: Token,
+    fromAccount: string,
+    toAccount: string,
+    amount: number
+  ) {
+    const nonce = await web3.eth.getTransactionCount(
+      fromAccount,
+      'latest'
+    );
+
+    const tx = {
+      to: toAccount,
+      value: amount,
+      gas: 30000,
+      maxFeePerGas: 1000000000,
+      nonce: nonce,
+      data:
+        token !== 'ETH'
+          ? tokenContracts[token].methods
+              .transfer(fromAccount, toAccount, amount)
+              .encodeABI()
+          : undefined,
+    };
+    return tx;
+  }

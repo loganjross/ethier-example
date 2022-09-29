@@ -1,8 +1,8 @@
-import { createContext, useContext, useState } from "react";
-import crypto from "crypto-js";
-import { Account as EthAccount } from "web3-core";
-import { web3, tokenContracts } from "../util/connection";
-import { User as FirebaseUser } from "firebase/auth";
+import { createContext, useContext, useState } from 'react';
+import crypto from 'crypto-js';
+import { Account as EthAccount, SignedTransaction } from 'web3-core';
+import { web3, tokenContracts } from '../util/connection';
+import { User as FirebaseUser } from 'firebase/auth';
 import {
   createFirebaseUser,
   deleteFirebaseUser,
@@ -10,9 +10,9 @@ import {
   loginFirebaseUser,
   logoutFirebaseUser,
   setUserData,
-} from "../util/firebase";
-import { nonEthTokenOptions, Token } from "./tokenPrices";
-import { useWidget } from "./widget";
+} from '../util/firebase';
+import { nonEthTokenOptions, Token } from './tokenPrices';
+import { useWidget } from './widget';
 
 // Ethier context
 export interface EthierUser {
@@ -22,14 +22,11 @@ export interface EthierUser {
   deleteFirebase: () => Promise<void>;
 }
 export interface Ethier {
-  isLoggedIn: boolean;
+  // For client use
   user: EthierUser | null;
-  signAndSendTx: (tx: any) => Promise<string | undefined>;
-  transferTokens: (
-    token: Token,
-    toAccount: string,
-    amount: number
-  ) => Promise<string | undefined>;
+  signTransaction: (tx: any) => Promise<SignedTransaction | undefined>;
+  signAndSendTransaction: (tx: any) => Promise<string | undefined>;
+  // For internal widget use
   createAccountOrLogin: (
     email: string,
     password: string,
@@ -38,18 +35,18 @@ export interface Ethier {
   deleteAccountOrLogout: (deleteAccount: boolean) => Promise<void>;
 }
 const EthierContext = createContext<Ethier>({
-  isLoggedIn: false,
+  // For client use
   user: null,
-  signAndSendTx: async () => "",
-  transferTokens: async () => "",
-  createAccountOrLogin: async () => "",
+  signTransaction: async () => undefined,
+  signAndSendTransaction: async () => undefined,
+  // For internal widget use
+  createAccountOrLogin: async () => '',
   deleteAccountOrLogout: async () => {},
 });
 
 // Ethier context provider
 export function EthierProvider(props: { children: any }) {
   const { setCurrentPage } = useWidget();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<EthierUser | null>(null);
 
   // Create account or login
@@ -66,10 +63,9 @@ export function EthierProvider(props: { children: any }) {
       // Create or get current Ethereum account keypair
       const ethierUser = await getOrCreateKeypair(user, email + password);
       // Log user in and redirect
-      setIsLoggedIn(true);
       setUser(ethierUser);
-      setCurrentPage("balances");
-      return "";
+      setCurrentPage('balances');
+      return '';
     } catch (err: any) {
       console.error(err);
       return err.toString();
@@ -85,7 +81,7 @@ export function EthierProvider(props: { children: any }) {
     }
 
     setUser(null);
-    setCurrentPage("login");
+    setCurrentPage('login');
   }
 
   // Fetch/add an Ethereum keypair from/to db
@@ -106,18 +102,20 @@ export function EthierProvider(props: { children: any }) {
       } else {
         // Otherwise, add a new one to db
         ethAccount = web3.eth.accounts.create(user.uid);
-        const privateKeyEncrypted = crypto.AES.encrypt(
-          ethAccount.privateKey,
-          salt
-        ).toString();
-        await setUserData(user.uid, {
-          publicKey: ethAccount.address,
-          privateKeyEncrypted,
-        });
+        if (ethAccount) {
+          const privateKeyEncrypted = crypto.AES.encrypt(
+            ethAccount.privateKey,
+            salt
+          ).toString();
+          await setUserData(user.uid, {
+            publicKey: ethAccount.address,
+            privateKeyEncrypted,
+          });
+        }
       }
 
       // Get ETH balance
-      const weiBalance = await web3.eth.getBalance(ethAccount.address);
+      const weiBalance = await web3.eth.getBalance(ethAccount?.address);
       const ethBalance = web3.utils.fromWei(weiBalance);
       tokenBalances.ETH = parseFloat(ethBalance);
 
@@ -143,8 +141,21 @@ export function EthierProvider(props: { children: any }) {
     };
   }
 
+  // Sign a transaction
+  async function signTransaction(
+    tx: any
+  ): Promise<SignedTransaction | undefined> {
+    if (!user?.ethAccount) return;
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      tx,
+      user.ethAccount.privateKey
+    );
+
+    return signedTransaction;
+  }
+
   // Sign and send a transaction
-  async function signAndSendTx(tx: any): Promise<string | undefined> {
+  async function signAndSendTransaction(tx: any): Promise<string | undefined> {
     if (!user?.ethAccount) return;
     const { rawTransaction } = await web3.eth.accounts.signTransaction(
       tx,
@@ -152,53 +163,29 @@ export function EthierProvider(props: { children: any }) {
     );
 
     if (rawTransaction) {
-      web3.eth.sendSignedTransaction(rawTransaction, (err, hash) => {
-        if (err) {
-          console.error(err);
-          return err.toString();
-        } else {
-          console.log(`Transaction successful: ${hash}`);
-          return hash;
+      web3.eth.sendSignedTransaction(
+        rawTransaction,
+        (err: any, hash: string) => {
+          if (err) {
+            console.error(err);
+            return err.toString();
+          } else {
+            console.log(`Transaction successful: ${hash}`);
+            return hash;
+          }
         }
-      });
+      );
     }
-  }
-
-  // Transfer tokens to an Ethereum address
-  async function transferTokens(
-    token: Token,
-    toAccount: string,
-    amount: number
-  ) {
-    if (!user?.ethAccount) return;
-    const nonce = await web3.eth.getTransactionCount(
-      user.ethAccount.address,
-      "latest"
-    );
-
-    const tx = {
-      to: toAccount,
-      value: amount,
-      gas: 30000,
-      maxFeePerGas: 1000000000,
-      nonce: nonce,
-      data:
-        token !== "ETH"
-          ? tokenContracts[token].methods
-              .transfer(user.ethAccount.address, toAccount, amount)
-              .encodeABI()
-          : undefined,
-    };
-    return await signAndSendTx(tx);
   }
 
   return (
     <EthierContext.Provider
       value={{
-        isLoggedIn,
+        // For client use
         user,
-        signAndSendTx,
-        transferTokens,
+        signTransaction,
+        signAndSendTransaction,
+        // For internal widget use
         createAccountOrLogin,
         deleteAccountOrLogout,
       }}
@@ -208,8 +195,31 @@ export function EthierProvider(props: { children: any }) {
   );
 }
 
-// Ethier context hook
-export const useEthier = () => {
-  const context = useContext(EthierContext);
-  return context;
-};
+// User account interactions hook (internal)
+export function useEthierUser() {
+  const { user, createAccountOrLogin, deleteAccountOrLogout } =
+    useContext(EthierContext);
+  return {
+    user,
+    createAccountOrLogin,
+    deleteAccountOrLogout,
+  };
+}
+
+// Ethier context hook (client)
+export function useEthier() {
+  const { setWidgetOpen, setCurrentPage } = useWidget();
+  const { user, signTransaction, signAndSendTransaction } =
+    useContext(EthierContext);
+  return {
+    isLoggedIn: user !== null,
+    promptLogin: () => {
+      if (user) return;
+      setCurrentPage('login');
+      setWidgetOpen(true);
+    },
+    getTokenBalance: (tokenSymbol: Token) => user?.tokenBalances[tokenSymbol],
+    signTransaction,
+    signAndSendTransaction,
+  };
+}
