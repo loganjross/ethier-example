@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useEthier } from '../../contexts/ethier';
+import { useUser } from '../../contexts/ethier';
 import { validateEmail } from '../../util/validate';
 import { ReactComponent as Spinner } from '../../assets/spinner.svg';
 
 export function LoginPage() {
-  const { createAccountOrLogin } = useEthier();
+  const { createAccountOrLogin } = useUser();
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -43,7 +43,7 @@ export function LoginPage() {
   }
 
   return (
-    <div className='ethier-modal-page flex-centered column'>
+    <div className='ethier-widget-page flex-centered column'>
       <h1 className='brand-text'>{creatingAccount ? 'Sign Up' : 'Ethier'}</h1>
       <span className='desc-text' style={{ margin: '-6px 0 10px 0' }}>
         {!creatingAccount && 'An easier way to use Ethereum.'}

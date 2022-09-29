@@ -1,7 +1,7 @@
 import { useEthier } from '../contexts/ethier';
 import { useWidget } from '../contexts/widget';
 
-// Button to trigger interactions with main modal
+// Button to trigger interactions with main widget
 export function EthierButton(props: { style?: React.CSSProperties }) {
   const { widgetOpen, toggleWidgetOpen } = useWidget();
   const { isLoggedIn } = useEthier();

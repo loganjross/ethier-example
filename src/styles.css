@@ -1,13 +1,23 @@
 /* Example dApp-specific styles */
+:root {
+  --light-grey: #cbcbcb;
+  --grey: #acacac;
+  --dark-grey: #6a6a6a;
+}
 body {
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   padding: 0;
   font-family: -apple-system, 'Helvetica Neue', sans-serif;
-  background: #fff;
-  color: #000;
+  background: #e0e0e0;
+  color: #323232;
 }
 *:focus-visible {
   outline: 0;
+}
+*::-webkit-scrollbar {
+  display: none;
 }
 h1, h2, p, span, a {
   margin: unset;
@@ -16,11 +26,13 @@ h1, h2, p, span, a {
 /* Flexbox utility classes */
 .flex {
   display: flex;
+  flex-wrap: wrap;
 }
 .flex-centered {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
 }
 .align-center {
   align-items: center;
@@ -55,15 +67,36 @@ h1, h2, p, span, a {
 .column {
   flex-direction: column;
 }
-.wrap {
-  flex-wrap: wrap;
-}
 
 /* Navbar */
 .navbar {
-  width: calc(100% - 30px);
-  padding: 15px;
+  width: calc(100% - 25px);
+  background: var(--light-grey);
+  padding: 10px;
+  padding-right: 15px;
 }
-.navbar p {
-  font-size: 20px;
+.view {
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  padding: 20px;
+}
+.wireframe, .example-box {
+  background: var(--grey);
+  margin: 10px;
+}
+.example-box {
+  width: 80%;
+  height: 200px;
+}
+.btn {
+  background: var(--dark-grey);
+  padding: 7px 20px;
+  cursor: pointer;
+  color: var(--light-grey);
+}
+
+@media screen and (max-width: 800px) {
+  .desktop-only {
+    display: none !important;
+  }
 }

@@ -1,11 +1,11 @@
 import { useWidget } from '../../contexts/widget';
-import { useEthier } from '../../contexts/ethier';
+import { useUser } from '../../contexts/ethier';
 import { useTokenPrices } from '../../contexts/tokenPrices';
 import { ReactComponent as EthLogo } from '../../assets/tokens/eth.svg';
 
 export function BalancesPage() {
   const { setCurrentPage } = useWidget();
-  const { user } = useEthier();
+  const { user } = useUser();
   const tokenPrices = useTokenPrices();
   console.log(tokenPrices);
 
@@ -25,7 +25,7 @@ export function BalancesPage() {
 
   if (user) {
     return (
-      <div className='ethier-modal-page balances-page flex-centered column'>
+      <div className='ethier-widget-page balances-page flex-centered column'>
         <h1>$0.00</h1>
         <div className='flex-centered'>
           <button>Buy</button>

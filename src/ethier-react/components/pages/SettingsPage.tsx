@@ -1,10 +1,10 @@
-import { useEthier } from '../../contexts/ethier';
+import { useUser } from '../../contexts/ethier';
 
 export function SettingsPage() {
-  const { deleteAccountOrLogout } = useEthier();
+  const { deleteAccountOrLogout } = useUser();
 
   return (
-    <div className='ethier-modal-page flex-centered column'>
+    <div className='ethier-widget-page flex-centered column'>
       <button
         className='full-width error-btn'
         onClick={() => deleteAccountOrLogout(false)}

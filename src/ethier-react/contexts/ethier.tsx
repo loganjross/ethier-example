@@ -18,6 +18,7 @@ import { useWidget } from './widget';
 export interface EthierUser {
   ethAccount: EthAccount | null;
   tokenBalances: Record<string, number>;
+  username: string | null;
   firebaseId: string;
   deleteFirebase: () => Promise<void>;
 }
@@ -136,6 +137,7 @@ export function EthierProvider(props: { children: any }) {
     return {
       ethAccount,
       tokenBalances,
+      username: user.displayName ?? user.email,
       firebaseId: user.uid,
       deleteFirebase: user.delete,
     };
@@ -196,7 +198,7 @@ export function EthierProvider(props: { children: any }) {
 }
 
 // User account interactions hook (internal)
-export function useEthierUser() {
+export function useUser() {
   const { user, createAccountOrLogin, deleteAccountOrLogout } =
     useContext(EthierContext);
   return {
@@ -218,6 +220,7 @@ export function useEthier() {
       setCurrentPage('login');
       setWidgetOpen(true);
     },
+    username: user?.username,
     getTokenBalance: (tokenSymbol: Token) => user?.tokenBalances[tokenSymbol],
     signTransaction,
     signAndSendTransaction,

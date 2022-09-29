@@ -1,3 +1,5 @@
 export function TransferPage() {
-  return <div className='ethier-modal-page flex-centered column'>Transfer</div>;
+  return (
+    <div className='ethier-widget-page flex-centered column'>Transfer</div>
+  );
 }

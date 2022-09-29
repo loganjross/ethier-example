@@ -12,8 +12,6 @@
   --success: var(--theme);
   --danger: #fa7676;
 
-  --modal-bg: rgba(0, 0, 0, 0.75);
-
   --btn-padding: 7px 25px 6px 25px;
 
   --spacing-sm: 5px;
@@ -242,7 +240,7 @@ input {
   font-size: var(--font-base);
 }
 
-.ethier-modal {
+.ethier-widget {
   position: absolute;
   width: 95%;
   max-width: 275px;
@@ -256,32 +254,32 @@ input {
   font-size: var(--font-base);
   font-family: 'Quicksand', sans-serif !important;
 }
-.ethier-modal-close {
+.ethier-widget-close {
   position: absolute;
   top: calc(var(--spacing-lg) - 4px);
   right: calc(var(--spacing-lg) - 4px);
   opacity: var(--subtle-opacity);
   cursor: pointer;
 }
-.ethier-modal-close:hover {
+.ethier-widget-close:hover {
   opacity: 1;
 }
-.ethier-modal-close:active {
+.ethier-widget-close:active {
   opacity: var(--subtle-opacity);
 }
-.ethier-modal-page {
+.ethier-widget-page {
   width: 100%;
   height: 100%;
   padding-bottom: 50px;
 }
-.ethier-modal-tabs {
+.ethier-widget-tabs {
   position: absolute;
   left: 0;
   bottom: 0;
   width: 100%;
   height: 50px;
 }
-.ethier-modal-tabs-border {
+.ethier-widget-tabs-border {
   position: absolute;
   top: 0;
   left: 0;
@@ -290,20 +288,20 @@ input {
   background: var(--theme);
   transition: all var(--transition-duration-short) ease-out;
 }
-.ethier-modal-tabs-tab {
+.ethier-widget-tabs-tab {
   width: 25%;
   font-size: var(--font-lg);
   opacity: var(--disabled-opacity);
   transition: all var(--transition-duration-short) ease;
   cursor: pointer;
 }
-.ethier-modal-tabs-tab:hover {
+.ethier-widget-tabs-tab:hover {
   opacity: 1;
 }
-.ethier-modal-tabs-tab:hover {
+.ethier-widget-tabs-tab:hover {
   opacity: var(--subtle-opacity);
 }
-.ethier-modal-tabs-tab.active {
+.ethier-widget-tabs-tab.active {
   opacity: 1;
   color: var(--theme);
 }

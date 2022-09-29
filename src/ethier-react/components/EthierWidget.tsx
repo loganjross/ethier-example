@@ -7,8 +7,8 @@ import { NftsPage } from './pages/NftsPage';
 import { TransferPage } from './pages/TransferPage';
 import { SettingsPage } from './pages/SettingsPage';
 
-// Main Ethier modal component
-export function EthierModal() {
+// Main Ethier widget
+export function EthierWidget() {
   const { widgetOpen, toggleWidgetOpen, currentPage, setCurrentPage } =
     useWidget();
   const { isLoggedIn } = useEthier();
@@ -18,7 +18,7 @@ export function EthierModal() {
     top: 0,
   });
 
-  // Place modal based on the position of Ethier Button
+  // Place widget based on the position of Ethier Button
   useEffect(() => {
     if (!button) return;
 
@@ -29,7 +29,7 @@ export function EthierModal() {
     });
   }, [button]);
 
-  // Return the current modal page
+  // Return the current widget page
   function renderCurrentPage(): JSX.Element {
     switch (currentPage) {
       case 'balances':
@@ -82,30 +82,30 @@ export function EthierModal() {
   if (widgetOpen) {
     return (
       <div
-        className='ethier-modal flex-centered column'
+        className='ethier-widget flex-centered column'
         style={{
           right: `calc(100vw - ${offset.right}px)`,
           top: offset.top + 50,
         }}
       >
         <div
-          className='ethier-modal-close flex-centered'
+          className='ethier-widget-close flex-centered'
           onClick={toggleWidgetOpen}
         >
           <i className='fa-regular fa-x'></i>
         </div>
         {renderCurrentPage()}
-        <div className='ethier-modal-tabs flex-centered'>
+        <div className='ethier-widget-tabs flex-centered'>
           {widgetTabsPages.map((page) => (
             <div
               key={page}
               onClick={() => (isLoggedIn ? setCurrentPage(page) : null)}
-              className={`ethier-modal-tabs-tab flex-centered ${
+              className={`ethier-widget-tabs-tab flex-centered ${
                 currentPage === page ? 'active' : ''
               }`}
             >
               <div
-                className='ethier-modal-tabs-border'
+                className='ethier-widget-tabs-border'
                 style={{
                   left: getBorderPosition(),
                   width: currentPage === 'login' ? '100%' : '25%',
