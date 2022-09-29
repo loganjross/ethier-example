@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { useFirebase } from '../../contexts/firebase';
+import { useEthier } from '../../contexts/ethier';
 import { validateEmail } from '../../util/validate';
 import { ReactComponent as Spinner } from '../../assets/spinner.svg';
 
 export function LoginPage() {
-  const { createAccountOrSignIn } = useFirebase();
+  const { createAccountOrLogin } = useEthier();
   const [creatingAccount, setCreatingAccount] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +29,7 @@ export function LoginPage() {
 
     // If no error, submit auth to firebase
     setLoading(true);
-    const resp = await createAccountOrSignIn(email, password, creatingAccount);
+    const resp = await createAccountOrLogin(email, password, creatingAccount);
     if (resp.includes('wrong-password')) {
       setError('Incorrect password');
     } else if (resp.includes('already-in-use')) {

@@ -29,8 +29,8 @@
   --border-radius: 14px;
   --round-radius: 50px;
 
-  --disabled-opacity: 0.6;
-  --subtle-opacity: 0.9;
+  --disabled-opacity: 0.5;
+  --subtle-opacity: 0.85;
 
   --drop-shadow-low: 0px 6px 25px -12px #000;
   --drop-shadow: 0px 6px 30px -10px #000;
@@ -149,12 +149,6 @@ button.full-width {
   text-shadow: var(--text-shadow);
   z-index: 100;
 }
-.secondary-btn {
-  background: unset;
-}
-.secondary-btn:hover {
-  background: var(--modal-bg) !important;
-}
 .link-btn {
   color: var(--theme);
   letter-spacing: 0.25px;
@@ -262,6 +256,19 @@ input {
   font-size: var(--font-base);
   font-family: 'Quicksand', sans-serif !important;
 }
+.ethier-modal-close {
+  position: absolute;
+  top: calc(var(--spacing-lg) - 4px);
+  right: calc(var(--spacing-lg) - 4px);
+  opacity: var(--subtle-opacity);
+  cursor: pointer;
+}
+.ethier-modal-close:hover {
+  opacity: 1;
+}
+.ethier-modal-close:active {
+  opacity: var(--subtle-opacity);
+}
 .ethier-modal-page {
   width: 100%;
   height: 100%;
@@ -299,4 +306,9 @@ input {
 .ethier-modal-tabs-tab.active {
   opacity: 1;
   color: var(--theme);
+}
+
+/* Balances page */
+.balances-page button {
+  margin: var(--spacing-lg);
 }

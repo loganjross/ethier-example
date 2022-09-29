@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { ModalPage, modalTabsPages, useModal } from '../contexts/modal';
-import { useFirebase } from '../contexts/firebase';
+import { WidgetPage, widgetTabsPages, useWidget } from '../contexts/widget';
+import { useEthier } from '../contexts/ethier';
 import { LoginPage } from './pages/LoginPage';
 import { BalancesPage } from './pages/BalancesPage';
 import { NftsPage } from './pages/NftsPage';
@@ -9,9 +9,10 @@ import { SettingsPage } from './pages/SettingsPage';
 
 // Main Ethier modal component
 export function EthierModal() {
-  const { user } = useFirebase();
+  const { widgetOpen, toggleWidgetOpen, currentPage, setCurrentPage } =
+    useWidget();
+  const { isLoggedIn } = useEthier();
   const button: HTMLElement | null = document.querySelector('.ethier-btn');
-  const { modalOpen, currentPage, setCurrentPage } = useModal();
   const [offset, setOffset] = useState<{ right: number; top: number }>({
     right: 0,
     top: 0,
@@ -45,29 +46,23 @@ export function EthierModal() {
   }
 
   // Get the icon for a page
-  function getPageIcon(page: ModalPage) {
+  function getPageIcon(page: WidgetPage) {
     let suffix = '';
     switch (page) {
       case 'balances':
-        suffix = 'ethereum';
+        suffix = 'circle-dollar-to-slot';
         break;
       case 'nfts':
         suffix = 'images';
         break;
       case 'transfer':
-        suffix = 'arrow-right-arrow-left';
+        suffix = 'paper-plane';
         break;
       case 'settings':
         suffix = 'sliders';
     }
 
-    return (
-      <i
-        className={`fa-${
-          page === 'balances' ? 'brands' : 'solid'
-        } fa-${suffix}`}
-      ></i>
-    );
+    return <i className={`fa-solid fa-${suffix}`}></i>;
   }
 
   // Returns styling position for tab border
@@ -84,7 +79,7 @@ export function EthierModal() {
     }
   }
 
-  if (modalOpen) {
+  if (widgetOpen) {
     return (
       <div
         className='ethier-modal flex-centered column'
@@ -93,12 +88,18 @@ export function EthierModal() {
           top: offset.top + 50,
         }}
       >
+        <div
+          className='ethier-modal-close flex-centered'
+          onClick={toggleWidgetOpen}
+        >
+          <i className='fa-regular fa-x'></i>
+        </div>
         {renderCurrentPage()}
         <div className='ethier-modal-tabs flex-centered'>
-          {modalTabsPages.map((page) => (
+          {widgetTabsPages.map((page) => (
             <div
               key={page}
-              onClick={() => (user ? setCurrentPage(page) : null)}
+              onClick={() => (isLoggedIn ? setCurrentPage(page) : null)}
               className={`ethier-modal-tabs-tab flex-centered ${
                 currentPage === page ? 'active' : ''
               }`}

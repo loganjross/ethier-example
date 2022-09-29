@@ -3,18 +3,18 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 // Import the Ethier react plugin and button to your dApp
-import { EthierProvider, EthierButton } from './ethier-react';
+import { EthierReact, EthierButton } from './ethier-react';
 
 // Example dApp
 function ExampleDapp() {
   return (
     // Wrap your app in the provider
-    <EthierProvider>
+    <EthierReact>
       <div className='navbar flex justify-between align-center'>
-        <p>Any dApp</p>
+        <p></p>
         <EthierButton />
       </div>
-    </EthierProvider>
+    </EthierReact>
   );
 }
 

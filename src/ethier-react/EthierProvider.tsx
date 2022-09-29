@@ -1,16 +1,19 @@
 import './index.css';
-import { FirebaseProvider } from './contexts/firebase';
-import { ModalStateProvider } from './contexts/modal';
+import { EthierProvider } from './contexts/ethier';
+import { WidgetStateProvider } from './contexts/widget';
+import { TokenPricesProvider } from './contexts/tokenPrices';
 import { EthierModal } from './components/EthierModal';
 
 // Wrapper for Ethier react widget
-export function EthierProvider(props: { children: any }) {
+export function EthierReact(props: { children: any }) {
   return (
-    <ModalStateProvider>
-      <FirebaseProvider>
-        <EthierModal />
-        {props.children}
-      </FirebaseProvider>
-    </ModalStateProvider>
+    <WidgetStateProvider>
+      <EthierProvider>
+        <TokenPricesProvider>
+          <EthierModal />
+          {props.children}
+        </TokenPricesProvider>
+      </EthierProvider>
+    </WidgetStateProvider>
   );
 }

@@ -1,21 +1,21 @@
-import { useFirebase } from '../contexts/firebase';
-import { useModal } from '../contexts/modal';
+import { useEthier } from '../contexts/ethier';
+import { useWidget } from '../contexts/widget';
 
 // Button to trigger interactions with main modal
 export function EthierButton(props: { style?: React.CSSProperties }) {
-  const { modalOpen, setModalOpen } = useModal();
-  const { user } = useFirebase();
+  const { widgetOpen, toggleWidgetOpen } = useWidget();
+  const { isLoggedIn } = useEthier();
 
   return (
     <button
       className={`ethier-btn brand-text flex-centered ${
-        modalOpen ? 'active' : ''
+        widgetOpen ? 'active' : ''
       }`}
-      onClick={() => setModalOpen(!modalOpen)}
+      onClick={toggleWidgetOpen}
       style={props.style}
     >
-      <span>{user?.displayName ?? 'Ethier'}</span>
-      <i className={`fa-${user ? 'solid' : 'regular'} fa-user`}></i>
+      <span>Ethier</span>
+      <i className={`fa-${isLoggedIn ? 'solid' : 'regular'} fa-user`}></i>
     </button>
   );
 }

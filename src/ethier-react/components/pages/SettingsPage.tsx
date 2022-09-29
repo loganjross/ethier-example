@@ -1,19 +1,19 @@
-import { useFirebase } from '../../contexts/firebase';
+import { useEthier } from '../../contexts/ethier';
 
 export function SettingsPage() {
-  const { signOutOrDeleteAccount } = useFirebase();
+  const { deleteAccountOrLogout } = useEthier();
 
   return (
     <div className='ethier-modal-page flex-centered column'>
       <button
         className='full-width error-btn'
-        onClick={() => signOutOrDeleteAccount()}
+        onClick={() => deleteAccountOrLogout(false)}
       >
         Sign Out
       </button>
       <span
         className='link-btn error-link-btn'
-        onClick={() => signOutOrDeleteAccount(true)}
+        onClick={() => deleteAccountOrLogout(true)}
       >
         Delete Account
       </span>
