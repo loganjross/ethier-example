@@ -215,6 +215,22 @@ input {
 .input-group i:hover, .input-group i.active {
   opacity: 1;
 }
+.input-group .price-estimation {
+  position: absolute;
+  top: calc(50% - 1px);
+  transform: translateY(-50%);
+  right: var(--spacing-lg)
+}
+
+/* Dropdowns */
+select {
+  border: 2px solid var(--theme);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm);
+  margin: var(--spacing-sm);
+  background: var(--black);
+  color: var(--white);
+}
 
 /* Spinning loader */
 .spinner {
@@ -253,7 +269,7 @@ input {
 }
 .ethier-widget-close {
   position: absolute;
-  top: var(--spacing-lg);
+  top: calc(var(--spacing-base) + 4px);
   right: var(--spacing-lg);
   opacity: var(--subtle-opacity);
   transition: all var(--transition-duration) ease;
@@ -269,8 +285,7 @@ input {
 .ethier-widget-page {
   width: calc(100% - (var(--spacing-lg) * 2));
   height: 100%;
-  padding: 0 var(--spacing-lg);
-  padding-bottom: 50px;
+  padding: 40px var(--spacing-lg) 50px var(--spacing-lg);
 }
 .ethier-widget-tabs {
   position: absolute;
@@ -307,7 +322,7 @@ input {
 }
 .ethier-widget-pubkey-copy {
   position: absolute;
-  top: var(--spacing-lg);
+  top: calc(var(--spacing-base) + 4px);
   left: var(--spacing-lg);
   opacity: var(--subtle-opacity);
   transition: all var(--transition-duration) ease;
@@ -324,11 +339,17 @@ input {
   margin-left: var(--spacing-base);
 }
 
+/* Login page */
+.login-page .link-btn {
+  margin: -5px 0 0 0;
+}
+
 /* Balances page */
 .balances-page {
   width: 100%;
   padding-left: 0;
   padding-right: 0;
+  padding-bottom: 60px;
 }
 .balances-page button {
   margin: var(--spacing-sm) var(--spacing-sm) var(--spacing-lg) var(--spacing-sm);
@@ -366,5 +387,22 @@ input {
   margin: 0 calc(var(--spacing-base) + 1px) 0 1px;
 }
 .balances-page-balance.light-bg {
-  background: rgba(255, 255, 255, 0.15)
+  background: rgba(255, 255, 255, 0.05)
+}
+
+/* Transfer page */
+.transfer-page .transfer-select {
+  margin-bottom: var(--spacing-sm);
+  width: 100%;
+}
+.transfer-page .transfer-select select {
+  margin-bottom: -2px;
+}
+.transfer-page svg {
+  width: 35px;
+  height: auto;
+  margin-right: var(--spacing-sm);
+}
+.transfer-page svg.eth-logo {
+  width: 27px;
 }

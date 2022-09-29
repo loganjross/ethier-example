@@ -3,7 +3,7 @@ import { Contract } from "web3-eth-contract";
 import { Token } from "../contexts/tokenPrices";
 
 // Web3
-export const CONNECTION_REFRESH = 10000;
+export const CONNECTION_REFRESH = 60000;
 const endpoint =
   "https://mainnet.infura.io/v3/b8e513d193714353a389314c169aed39";
 const provider = new Web3.providers.HttpProvider(endpoint);
@@ -24,29 +24,29 @@ export const tokenContracts: Record<string, Contract> = {
 };
 
 // Transfer tokens to an Ethereum address
-  async function getTransferTransaction(
-    token: Token,
-    fromAccount: string,
-    toAccount: string,
-    amount: number
-  ) {
-    const nonce = await web3.eth.getTransactionCount(
-      fromAccount,
-      'latest'
-    );
+export async function getTransferTransaction(
+  token: Token,
+  fromAccount: string,
+  toAccount: string,
+  amount: number
+) {
+  const nonce = await web3.eth.getTransactionCount(
+    fromAccount,
+    'latest'
+  );
 
-    const tx = {
-      to: toAccount,
-      value: amount,
-      gas: 30000,
-      maxFeePerGas: 1000000000,
-      nonce: nonce,
-      data:
-        token !== 'ETH'
-          ? tokenContracts[token].methods
-              .transfer(fromAccount, toAccount, amount)
-              .encodeABI()
-          : undefined,
-    };
-    return tx;
-  }
+  const tx = {
+    to: toAccount,
+    value: amount,
+    gas: 30000,
+    maxFeePerGas: 1000000000,
+    nonce: nonce,
+    data:
+      token !== 'ETH'
+        ? tokenContracts[token].methods
+            .transfer(fromAccount, toAccount, amount)
+            .encodeABI()
+        : undefined,
+  };
+  return tx;
+}

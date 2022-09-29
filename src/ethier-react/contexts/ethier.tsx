@@ -141,7 +141,6 @@ export function EthierProvider(props: { children: any }) {
 
       // Get non-Eth balances
       for (const token of nonEthTokens) {
-        console.log(token);
         const weiBalance = await tokenContracts[token].methods
           .balanceOf(ethAccount.address)
           .call();
