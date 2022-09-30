@@ -3,7 +3,7 @@ import BN from "bn.js";
 import { useConnection, useNetwork } from "../../contexts/connection";
 import { useEthier, useUser } from "../../contexts/ethier";
 import { useTokenPrices } from "../../contexts/tokenPrices";
-import { getTransferTransaction } from "../../util/transactions";
+import { useTransferTransaction } from "../../util/transactions";
 import { useCurrencyFormatting } from "../../util/format";
 import { TokenLogo } from "../TokenLogo";
 import { ReactComponent as Spinner } from "../../assets/spinner.svg";
@@ -21,10 +21,14 @@ export function TransferPage() {
   const invalidToAccount =
     !toAccount.length || !connection.utils.isAddress(toAccount);
   const [gas, setGas] = useState(0);
-  const [tx, setTx] = useState<any>();
   const [error, setError] = useState("");
   const [txHash, setTxHash] = useState("");
   const [loading, setLoading] = useState(false);
+  const transferTx = useTransferTransaction(
+    token,
+    toAccount,
+    getWithinMaxRange()
+  );
 
   // Submit a token transfer
   async function submitTransfer() {
@@ -43,7 +47,7 @@ export function TransferPage() {
 
     // Send tx
     setLoading(true);
-    const hash = await signAndSendTransaction(tx);
+    const hash = await signAndSendTransaction(transferTx);
     if (hash) {
       console.log(`tx success: ${hash}`);
       setAmountString("0");
@@ -73,19 +77,14 @@ export function TransferPage() {
     const amount = getWithinMaxRange();
     setAmountString(amount.toString());
 
-    getTransferTransaction(
-      connection,
-      user.ethAccount.address,
-      toAccount,
-      amount,
-      undefined
-    ).then(async (tx) => {
-      const gas = await connection.eth.estimateGas(tx);
-      const gasPrice = await connection.eth.getGasPrice();
-      const gasBN = new BN(gas * parseFloat(gasPrice));
-      const gasNum = parseFloat(connection.utils.fromWei(gasBN));
-      setGas(gasNum);
-      setTx(tx);
+    // Estimate gas
+    if (!transferTx) return;
+    connection.eth.estimateGas(transferTx).then((gas) => {
+      connection.eth.getGasPrice().then((gasPrice) => {
+        const gasBN = new BN(gas * parseFloat(gasPrice));
+        const gasNum = parseFloat(connection.utils.fromWei(gasBN));
+        setGas(gasNum);
+      });
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [amountString, toAccount, token]);

@@ -1,26 +1,30 @@
 import BN from "bn.js";
-import Web3 from "web3";
 import { useConnection } from "../contexts/connection";
 
 // Constants
 export const WEI_PER_ETH = new BN("1000000000000000000");
 
 // Transfer tokens to an Ethereum address
-export async function getTransferTransaction(
-  connection: Web3,
-  fromAccount: string,
+export function useTransferTransaction(
+  token: string,
   toAccount: string,
-  amount: number,
-  data: any
+  amount: number
 ) {
-  const gasPrice = await connection.eth.getGasPrice();
+  const tokenContracts = useTokenContracts();
+  if (!token || !toAccount || !amount) return;
 
-  const weiString = !data ? WEI_PER_ETH.muln(amount).toString() : "0x0";
+  const weiString = WEI_PER_ETH.muln(amount).toString();
+  const data =
+    token === "ETH"
+      ? undefined
+      : // @ts-ignore
+        tokenContracts[token].methods
+          .transfer(toAccount, weiString)
+          .encodeABI();
   return {
     to: toAccount,
-    value: weiString,
+    value: token === "ETH" ? weiString : "0x0",
     gas: "2000000",
-    gasPrice,
     data,
   };
 }
