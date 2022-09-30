@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import BN from "bn.js";
-import { useConnection } from "../../contexts/connection";
+import { useConnection, useNetwork } from "../../contexts/connection";
 import { useEthier, useUser } from "../../contexts/ethier";
 import { useTokenPrices } from "../../contexts/tokenPrices";
 import { getTransferTransaction } from "../../util/transactions";
@@ -9,6 +9,7 @@ import { TokenLogo } from "../TokenLogo";
 import { ReactComponent as Spinner } from "../../assets/spinner.svg";
 
 export function TransferPage() {
+  const { network } = useNetwork();
   const connection = useConnection();
   const { currencyFormatter } = useCurrencyFormatting();
   const { signAndSendTransaction } = useEthier();
@@ -22,7 +23,7 @@ export function TransferPage() {
   const [gas, setGas] = useState(0);
   const [tx, setTx] = useState<any>();
   const [error, setError] = useState("");
-  const [feedback, setFeedback] = useState("");
+  const [txHash, setTxHash] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Submit a token transfer
@@ -47,8 +48,9 @@ export function TransferPage() {
       console.log(`tx success: ${hash}`);
       setAmountString("0");
       setToAccount("");
-      setFeedback("✔");
+      setTxHash(hash);
       setTransactionRefresh(!transactionRefresh);
+      setTimeout(() => setTxHash(""), 7000);
     } else {
       setError("Something went wrong");
     }
@@ -163,16 +165,36 @@ export function TransferPage() {
           className={`full-width ${
             error.length && !loading ? "error-btn" : ""
           }`}
-          onClick={submitTransfer}
+          onClick={() => {
+            if (txHash.length) {
+              window.open(
+                `https://${
+                  network === "Görli" ? "goerli" : ""
+                }.etherscan.io/tx/${txHash}`,
+                "_blank"
+              );
+              setTxHash("");
+            } else {
+              submitTransfer();
+            }
+          }}
         >
           {loading ? (
             <Spinner />
           ) : error.length ? (
             error
-          ) : feedback.length ? (
-            feedback
+          ) : txHash.length ? (
+            "Transaction Sent"
           ) : (
             "Send"
+          )}
+          {txHash.length ? (
+            <i
+              className="fa-solid fa-arrow-up-right-from-square"
+              style={{ marginLeft: 10 }}
+            ></i>
+          ) : (
+            <></>
           )}
         </button>
       </div>

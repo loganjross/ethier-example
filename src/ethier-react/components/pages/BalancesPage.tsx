@@ -1,10 +1,12 @@
 import { useWidget } from "../../contexts/widget";
+import { useNetwork } from "../../contexts/connection";
 import { useUser } from "../../contexts/ethier";
 import { useTokenPrices } from "../../contexts/tokenPrices";
 import { useCurrencyFormatting } from "../../util/format";
 import { TokenLogo } from "../TokenLogo";
 
 export function BalancesPage() {
+  const { network } = useNetwork();
   const { setCurrentPage } = useWidget();
   const { user } = useUser();
   const tokenPrices = useTokenPrices();
@@ -27,7 +29,18 @@ export function BalancesPage() {
         <h1 className="brand-text">Balances</h1>
         <h1 className="total-value">{currencyAbbrev(getTotalValue(), true)}</h1>
         <div className="flex-centered">
-          <button>Buy</button>
+          <button
+            onClick={() =>
+              window.open(
+                network === "Mainnet"
+                  ? "https://ethereum.org/en/get-eth/"
+                  : "https://goerli-faucet.pk910.de/",
+                "_blank"
+              )
+            }
+          >
+            {network === "Mainnet" ? "Buy" : "Mine"}
+          </button>
           <button onClick={() => setCurrentPage("transfer")}>Send</button>
         </div>
         <div className="balances-page-balances">
