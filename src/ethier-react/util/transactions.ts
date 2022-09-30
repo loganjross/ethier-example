@@ -14,7 +14,6 @@ export async function getTransferTransaction(
   data: any
 ) {
   const gasPrice = await connection.eth.getGasPrice();
-  const nonce = await connection.eth.getTransactionCount(fromAccount, "latest");
 
   const weiString = !data ? WEI_PER_ETH.muln(amount).toString() : "0x0";
   return {
@@ -22,7 +21,6 @@ export async function getTransferTransaction(
     value: weiString,
     gas: "2000000",
     gasPrice,
-    nonce,
     data,
   };
 }
