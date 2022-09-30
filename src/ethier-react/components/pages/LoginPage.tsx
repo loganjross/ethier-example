@@ -37,7 +37,7 @@ export function LoginPage() {
     } else if (resp.includes("not-found")) {
       setError("No account found");
     } else if (resp.length) {
-      setError("An error occurred");
+      setError("Something went wrong");
     }
     setLoading(false);
   }

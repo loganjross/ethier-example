@@ -1,6 +1,6 @@
 import { useWidget } from "../../contexts/widget";
 import { useUser } from "../../contexts/ethier";
-import { Token, useTokenPrices } from "../../contexts/tokenPrices";
+import { useTokenPrices } from "../../contexts/tokenPrices";
 import { useCurrencyFormatting } from "../../util/format";
 import { TokenLogo } from "../TokenLogo";
 
@@ -16,8 +16,7 @@ export function BalancesPage() {
 
     let totalValue = 0;
     Object.keys(user.tokenBalances).forEach((token) => {
-      totalValue +=
-        user.tokenBalances[token as Token] * tokenPrices[token as Token];
+      totalValue += user.tokenBalances[token] * tokenPrices[token];
     });
     return totalValue;
   }
@@ -40,15 +39,13 @@ export function BalancesPage() {
               }`}
             >
               <div className="balances-page-token flex-centered">
-                <TokenLogo token={token as Token} />
+                <TokenLogo token={token} />
                 <div className="flex-centered">
                   <h2>{token}</h2>
-                  <span>
-                    {currencyFormatter(tokenPrices[token as Token], true)}
-                  </span>
+                  <span>{currencyFormatter(tokenPrices[token], true)}</span>
                 </div>
               </div>
-              <h2>{user.tokenBalances[token as Token]}</h2>
+              <h2>{currencyFormatter(user.tokenBalances[token], false, 10)}</h2>
             </div>
           ))}
         </div>

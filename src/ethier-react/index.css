@@ -253,6 +253,14 @@ select {
   right: var(--spacing-base);
 }
 
+/* Default token logo */
+.default-token-logo {
+  width: 20px;
+  height: 20px;
+  background: var(--theme-2);
+  margin-right: var(--spacing-sm);
+}
+
 /* Spinning loader */
 .spinner {
   animation: spin 0.45s infinite ease-out;

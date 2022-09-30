@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import crypto from "crypto-js";
 import { Account as EthAccount, SignedTransaction } from "web3-core";
-import { web3, tokenContracts, CONNECTION_REFRESH } from "../util/web3";
 import { User as FirebaseUser } from "firebase/auth";
 import {
   createFirebaseUser,
@@ -11,13 +10,13 @@ import {
   logoutFirebaseUser,
   setUserData,
 } from "../util/firebase";
-import { nonEthTokens, Token } from "./tokenPrices";
 import { useWidget } from "./widget";
+import { CONNECTION_REFRESH, useConnection, useNetwork } from "./connection";
 
 // Ethier context
 export interface EthierUser {
   ethAccount: EthAccount | null;
-  tokenBalances: Record<Token, number>;
+  tokenBalances: Record<string, number>;
   email: string | null;
   firebaseId: string;
   deleteFirebase: () => Promise<void>;
@@ -34,6 +33,8 @@ export interface Ethier {
     createAccount: boolean
   ) => Promise<string>;
   deleteAccountOrLogout: (deleteAccount: boolean) => Promise<void>;
+  transactionRefresh: boolean;
+  setTransactionRefresh: (refresh: boolean) => void;
 }
 const EthierContext = createContext<Ethier>({
   // For client use
@@ -43,12 +44,17 @@ const EthierContext = createContext<Ethier>({
   // For internal widget use
   createAccountOrLogin: async () => "",
   deleteAccountOrLogout: async () => {},
+  transactionRefresh: false,
+  setTransactionRefresh: () => {},
 });
 
 // Ethier context provider
 export function EthierProvider(props: { children: any }) {
+  const { network } = useNetwork();
+  const connection = useConnection();
   const { setCurrentPage } = useWidget();
   const [user, setUser] = useState<EthierUser | null>(null);
+  const [transactionRefresh, setTransactionRefresh] = useState(false);
 
   // Create account or login
   async function createAccountOrLogin(
@@ -98,10 +104,13 @@ export function EthierProvider(props: { children: any }) {
       if (keypair) {
         const bytes = crypto.AES.decrypt(keypair.privateKeyEncrypted, salt);
         const privateKey = bytes.toString(crypto.enc.Utf8);
-        ethAccount = web3.eth.accounts.privateKeyToAccount(privateKey, true);
+        ethAccount = connection.eth.accounts.privateKeyToAccount(
+          privateKey,
+          true
+        );
       } else {
         // Otherwise, add a new one to db
-        ethAccount = web3.eth.accounts.create();
+        ethAccount = connection.eth.accounts.create();
         if (ethAccount) {
           const privateKeyEncrypted = crypto.AES.encrypt(
             ethAccount.privateKey,
@@ -136,18 +145,9 @@ export function EthierProvider(props: { children: any }) {
 
     if (ethAccount) {
       // Get ETH balance
-      const weiBalance = await web3.eth.getBalance(ethAccount?.address);
-      const ethBalance = web3.utils.fromWei(weiBalance, "ether");
+      const weiBalance = await connection.eth.getBalance(ethAccount?.address);
+      const ethBalance = connection.utils.fromWei(weiBalance, "ether");
       tokenBalances.ETH = parseFloat(ethBalance);
-
-      // Get non-Eth balances
-      // for (const token of nonEthTokens) {
-      //   const weiBalance = await tokenContracts[token].methods
-      //     .balanceOf(ethAccount.address)
-      //     .call();
-      //   const balance = web3.utils.fromWei(weiBalance);
-      //   tokenBalances[token] = parseFloat(balance);
-      // }
     }
 
     return tokenBalances;
@@ -165,40 +165,37 @@ export function EthierProvider(props: { children: any }) {
   // Sign and send a transaction
   async function signAndSendTransaction(tx: any): Promise<string | undefined> {
     if (!user?.ethAccount) return;
-    const signedTx = await signTransaction(tx);
+    const signedTransaction = await signTransaction(tx);
 
-    if (signedTx?.rawTransaction) {
-      web3.eth.sendSignedTransaction(
-        signedTx.rawTransaction,
-        (err: any, hash: string) => {
-          if (err) {
-            console.error(err);
-            return err.toString();
-          } else {
-            console.log(`Transaction successful: ${hash}`);
-            return hash;
-          }
-        }
-      );
+    try {
+      if (signedTransaction?.rawTransaction) {
+        const { transactionHash } = await connection.eth.sendSignedTransaction(
+          signedTransaction.rawTransaction
+        );
+
+        return transactionHash;
+      }
+    } catch (err) {
+      console.error(err);
+      return;
     }
   }
 
-  // Once we login, continually refresh account data
+  // Once we login, continually refresh account data (or on network change/tx refresh)
   useEffect(() => {
-    if (!user) return;
+    async function getBalances() {
+      if (!user) return;
+      const tokenBalances = await getTokenBalances(user.ethAccount);
+      user.tokenBalances = tokenBalances;
+      setUser({ ...user });
+    }
 
     // Token balances
-    const balancesInterval = setInterval(
-      () =>
-        getTokenBalances(user.ethAccount).then((tokenBalances) => {
-          user.tokenBalances = tokenBalances;
-          setUser({ ...user });
-        }),
-      CONNECTION_REFRESH
-    );
+    const balancesInterval = setInterval(getBalances, CONNECTION_REFRESH);
+    getBalances();
     return () => clearInterval(balancesInterval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.ethAccount?.address]);
+  }, [network, user?.ethAccount?.address, transactionRefresh]);
 
   return (
     <EthierContext.Provider
@@ -210,6 +207,8 @@ export function EthierProvider(props: { children: any }) {
         // For internal widget use
         createAccountOrLogin,
         deleteAccountOrLogout,
+        transactionRefresh,
+        setTransactionRefresh,
       }}
     >
       {props.children}
@@ -219,12 +218,19 @@ export function EthierProvider(props: { children: any }) {
 
 // User account interactions hook (internal)
 export function useUser() {
-  const { user, createAccountOrLogin, deleteAccountOrLogout } =
-    useContext(EthierContext);
+  const {
+    user,
+    createAccountOrLogin,
+    deleteAccountOrLogout,
+    transactionRefresh,
+    setTransactionRefresh,
+  } = useContext(EthierContext);
   return {
     user,
     createAccountOrLogin,
     deleteAccountOrLogout,
+    transactionRefresh,
+    setTransactionRefresh,
   };
 }
 
@@ -244,8 +250,8 @@ export function useEthier() {
     logout: () => deleteAccountOrLogout(false),
     email: user?.email,
     ethAddress: user?.ethAccount?.address,
-    getTokenBalance: (tokenSymbol: string) =>
-      user?.tokenBalances[tokenSymbol as Token],
+    tokens: Object.keys(user?.tokenBalances ?? {}),
+    getTokenBalance: (tokenSymbol: string) => user?.tokenBalances[tokenSymbol],
     signTransaction,
     signAndSendTransaction,
   };

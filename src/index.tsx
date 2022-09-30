@@ -39,20 +39,15 @@ function ExampleDapp() {
             <div className="example-box-data flex-centered">
               <div className="user-email flex align-center justify-between">
                 <p>{ethier.email}</p>
-                <p>{`${ethier.ethAddress.substring(
-                  0,
-                  4
-                )}...${ethier.ethAddress.substring(
-                  ethier.ethAddress.length - 4
-                )}`}</p>
+                <p>{`${ethier.ethAddress.substring(0, 4)}..`}</p>
               </div>
-              {["ETH", "USDT", "UNI"].map((token) => (
+              {ethier.tokens.map((token) => (
                 <div
                   key={token}
                   className="example-box-data-item flex align-center justify-between"
                 >
                   <b>{token}</b>
-                  <p>{ethier.getTokenBalance(token)}</p>
+                  <p>{ethier.getTokenBalance(token)?.toFixed(6)}</p>
                 </div>
               ))}
             </div>

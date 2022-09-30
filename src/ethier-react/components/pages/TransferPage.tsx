@@ -1,25 +1,28 @@
 import { useEffect, useState } from "react";
 import BN from "bn.js";
+import { useConnection } from "../../contexts/connection";
 import { useEthier, useUser } from "../../contexts/ethier";
-import { Token, useTokenPrices } from "../../contexts/tokenPrices";
-import { getTransferTransaction, web3 } from "../../util/web3";
+import { useTokenPrices } from "../../contexts/tokenPrices";
+import { getTransferTransaction } from "../../util/web3";
 import { useCurrencyFormatting } from "../../util/format";
 import { TokenLogo } from "../TokenLogo";
 import { ReactComponent as Spinner } from "../../assets/spinner.svg";
 
 export function TransferPage() {
+  const connection = useConnection();
   const { currencyFormatter } = useCurrencyFormatting();
   const { signAndSendTransaction } = useEthier();
-  const { user } = useUser();
+  const { user, transactionRefresh, setTransactionRefresh } = useUser();
   const tokenPrices = useTokenPrices();
-  const [token, setToken] = useState<Token>("ETH");
+  const [token, setToken] = useState("ETH");
   const [amountString, setAmountString] = useState("");
   const [toAccount, setToAccount] = useState("");
   const invalidToAccount =
-    !toAccount.length || !web3.utils.isAddress(toAccount);
+    !toAccount.length || !connection.utils.isAddress(toAccount);
   const [gas, setGas] = useState(0);
   const [tx, setTx] = useState<any>();
   const [error, setError] = useState("");
+  const [feedback, setFeedback] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Submit a token transfer
@@ -40,7 +43,15 @@ export function TransferPage() {
     // Send tx
     setLoading(true);
     const hash = await signAndSendTransaction(tx);
-    console.log(`tx: ${hash}`);
+    if (hash) {
+      console.log(`tx success: ${hash}`);
+      setAmountString("0");
+      setToAccount("");
+      setFeedback("✔");
+      setTransactionRefresh(!transactionRefresh);
+    } else {
+      setError("Something went wrong");
+    }
     setLoading(false);
   }
 
@@ -61,15 +72,15 @@ export function TransferPage() {
     setAmountString(amount.toString());
 
     getTransferTransaction(
-      token,
+      connection,
       user.ethAccount.address,
       toAccount,
       amount
     ).then(async (tx) => {
-      const gas = await web3.eth.estimateGas(tx);
-      const gasPrice = await web3.eth.getGasPrice();
+      const gas = await connection.eth.estimateGas(tx);
+      const gasPrice = await connection.eth.getGasPrice();
       const gasBN = new BN(gas * parseFloat(gasPrice));
-      const gasNum = parseFloat(web3.utils.fromWei(gasBN));
+      const gasNum = parseFloat(connection.utils.fromWei(gasBN));
       setGas(gasNum);
       setTx(tx);
     });
@@ -82,10 +93,7 @@ export function TransferPage() {
         <div className="transfer-select flex align-center justify-between">
           <h1 className="brand-text">Transfer</h1>
           <div className="select-group">
-            <select
-              value={token}
-              onChange={(e) => setToken(e.target.value as Token)}
-            >
+            <select value={token} onChange={(e) => setToken(e.target.value)}>
               {Object.keys(user.tokenBalances).map((token) => (
                 <option key={token} value={token}>
                   {token}
@@ -94,7 +102,7 @@ export function TransferPage() {
             </select>
             <i className="fa-solid fa-angle-down"></i>
           </div>
-          <TokenLogo token={token as Token} />
+          <TokenLogo token={token} />
         </div>
         <div
           className={`input-group ${amountString.length ? "has-value" : ""}`}
@@ -156,7 +164,15 @@ export function TransferPage() {
           }`}
           onClick={submitTransfer}
         >
-          {loading ? <Spinner /> : error.length ? error : "Send"}
+          {loading ? (
+            <Spinner />
+          ) : error.length ? (
+            error
+          ) : feedback.length ? (
+            feedback
+          ) : (
+            "Send"
+          )}
         </button>
       </div>
     );

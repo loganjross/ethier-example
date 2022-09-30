@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { Network, networks, useNetwork } from "../../contexts/connection";
 import { useUser } from "../../contexts/ethier";
 
 export function SettingsPage() {
+  const { network, setNetwork } = useNetwork();
   const { deleteAccountOrLogout } = useUser();
-  const [network, setNetwork] = useState("Mainnet");
 
   return (
     <div className="ethier-widget-page settings-page flex-centered column">
@@ -11,8 +11,11 @@ export function SettingsPage() {
       <div className="settings-page-setting flex align-start justify-center column">
         <span className="desc-text">Network</span>
         <div className="select-group">
-          <select value={network} onChange={(e) => setNetwork(e.target.value)}>
-            {["Mainnet"].map((network) => (
+          <select
+            value={network}
+            onChange={(e) => setNetwork(e.target.value as Network)}
+          >
+            {networks.map((network) => (
               <option key={network} value={network}>
                 {network}
               </option>
