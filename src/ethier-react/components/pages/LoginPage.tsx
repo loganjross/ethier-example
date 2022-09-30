@@ -1,26 +1,26 @@
-import { useState } from 'react';
-import { useUser } from '../../contexts/ethier';
-import { validateEmail } from '../../util/validate';
-import { ReactComponent as Spinner } from '../../assets/spinner.svg';
+import { useState } from "react";
+import { useUser } from "../../contexts/ethier";
+import { validateEmail } from "../../util/validate";
+import { ReactComponent as Spinner } from "../../assets/spinner.svg";
 
 export function LoginPage() {
   const { createAccountOrLogin } = useUser();
   const [creatingAccount, setCreatingAccount] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Check inputs and submit login / create account
   async function submit() {
-    let error = '';
+    let error = "";
     if (!email.length || !validateEmail(email)) {
-      error = 'Invalid email';
+      error = "Invalid email";
     } else if (!password.length) {
-      error = 'Invalid password';
+      error = "Invalid password";
     } else if (password.length < 6) {
-      error = 'Use a longer password';
+      error = "Use a longer password";
     }
     if (error.length) {
       setError(error);
@@ -30,48 +30,48 @@ export function LoginPage() {
     // If no error, submit auth to firebase
     setLoading(true);
     const resp = await createAccountOrLogin(email, password, creatingAccount);
-    if (resp.includes('wrong-password')) {
-      setError('Incorrect password');
-    } else if (resp.includes('already-in-use')) {
-      setError('Email already in use');
-    } else if (resp.includes('not-found')) {
-      setError('No account found');
+    if (resp.includes("wrong-password")) {
+      setError("Incorrect password");
+    } else if (resp.includes("already-in-use")) {
+      setError("Email already in use");
+    } else if (resp.includes("not-found")) {
+      setError("No account found");
     } else if (resp.length) {
-      setError('An error occurred');
+      setError("An error occurred");
     }
     setLoading(false);
   }
 
   return (
-    <div className='ethier-widget-page login-page flex-centered column'>
-      <h1 className='brand-text'>{creatingAccount ? 'Sign Up' : 'Ethier'}</h1>
-      <span className='desc-text' style={{ margin: '-6px 0 10px 0' }}>
-        {!creatingAccount && 'An easier way to use Ethereum.'}
+    <div className="ethier-widget-page login-page flex-centered column">
+      <h1 className="brand-text">{creatingAccount ? "Sign Up" : "Ethier"}</h1>
+      <span className="desc-text" style={{ margin: "-6px 0 10px 0" }}>
+        {!creatingAccount && "An easier way to use Ethereum dApps."}
       </span>
-      <div className={`input-group ${email.length ? 'has-value' : ''}`}>
+      <div className={`input-group ${email.length ? "has-value" : ""}`}>
         <input
-          type='text'
+          type="text"
           value={email}
           onChange={(e) => setEmail(e.target.value.toLowerCase())}
-          onKeyUp={(e) => (e.code === 'Enter' ? submit() : null)}
+          onKeyUp={(e) => (e.code === "Enter" ? submit() : null)}
         />
-        <label className='placeholder'>Email</label>
+        <label className="placeholder">Email</label>
       </div>
-      <div className={`input-group ${password.length ? 'has-value' : ''}`}>
+      <div className={`input-group ${password.length ? "has-value" : ""}`}>
         <input
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword ? "text" : "password"}
           value={password}
           onChange={(e) => setPassword(e.target.value.toLowerCase())}
-          onKeyUp={(e) => (e.code === 'Enter' ? submit() : null)}
+          onKeyUp={(e) => (e.code === "Enter" ? submit() : null)}
         />
-        <label className='placeholder'>Password</label>
+        <label className="placeholder">Password</label>
         <i
           onClick={() => setShowPassword(!showPassword)}
-          className={`fa-regular fa-eye${showPassword ? ' active' : '-slash'}`}
+          className={`fa-regular fa-eye${showPassword ? " active" : "-slash"}`}
         ></i>
       </div>
       <button
-        className={`full-width ${error.length && !loading ? 'error-btn' : ''}`}
+        className={`full-width ${error.length && !loading ? "error-btn" : ""}`}
         onClick={submit}
       >
         {loading ? (
@@ -79,16 +79,16 @@ export function LoginPage() {
         ) : error.length ? (
           error
         ) : creatingAccount ? (
-          'Create'
+          "Create"
         ) : (
-          'Login'
+          "Login"
         )}
       </button>
       <span
-        className='link-btn'
+        className="link-btn"
         onClick={() => setCreatingAccount(!creatingAccount)}
       >
-        {creatingAccount ? 'Already a user?' : 'Create Account'}
+        {creatingAccount ? "Already a user?" : "Create Account"}
       </span>
     </div>
   );
