@@ -1,8 +1,8 @@
-import { useWidget } from '../../contexts/widget';
-import { useUser } from '../../contexts/ethier';
-import { Token, useTokenPrices } from '../../contexts/tokenPrices';
-import { useCurrencyFormatting } from '../../util/format';
-import { TokenLogo } from '../TokenLogo';
+import { useWidget } from "../../contexts/widget";
+import { useUser } from "../../contexts/ethier";
+import { Token, useTokenPrices } from "../../contexts/tokenPrices";
+import { useCurrencyFormatting } from "../../util/format";
+import { TokenLogo } from "../TokenLogo";
 
 export function BalancesPage() {
   const { setCurrentPage } = useWidget();
@@ -24,24 +24,24 @@ export function BalancesPage() {
 
   if (user) {
     return (
-      <div className='ethier-widget-page balances-page flex-centered column'>
-        <h1 className='brand-text'>Balances</h1>
-        <h1 className='total-value'>{currencyAbbrev(getTotalValue(), true)}</h1>
-        <div className='flex-centered'>
+      <div className="ethier-widget-page balances-page flex-centered column">
+        <h1 className="brand-text">Balances</h1>
+        <h1 className="total-value">{currencyAbbrev(getTotalValue(), true)}</h1>
+        <div className="flex-centered">
           <button>Buy</button>
-          <button onClick={() => setCurrentPage('transfer')}>Send</button>
+          <button onClick={() => setCurrentPage("transfer")}>Send</button>
         </div>
-        <div className='balances-page-balances'>
+        <div className="balances-page-balances">
           {Object.keys(user.tokenBalances).map((token, i) => (
             <div
               key={token}
               className={`balances-page-balance flex align-center justify-between ${
-                (i + 1) % 2 === 0 ? 'light-bg' : ''
+                (i + 1) % 2 === 0 ? "light-bg" : ""
               }`}
             >
-              <div className='balances-page-token flex-centered'>
+              <div className="balances-page-token flex-centered">
                 <TokenLogo token={token as Token} />
-                <div className='flex-centered'>
+                <div className="flex-centered">
                   <h2>{token}</h2>
                   <span>
                     {currencyFormatter(tokenPrices[token as Token], true)}

@@ -1,5 +1,5 @@
 # Ethier
-### An easier way to use Ethereum dApps.
+### An easier way to use Ethereum.
 
 ```bash
 npm i && npm run start

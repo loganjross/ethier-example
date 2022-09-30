@@ -56,6 +56,7 @@ h2 {
 .desc-text {
   font-style: italic;
   opacity: var(--subtle-opacity);
+  white-space: nowrap;
 }
 
 /* Flexbox utility classes */
@@ -226,14 +227,30 @@ input {
 }
 
 /* Dropdowns */
+.select-group {
+  position: relative;
+  min-width: 80px;
+}
 select {
+  width: 100%;
   border: 2px solid var(--theme);
   border-radius: var(--border-radius);
-  padding: var(--spacing-sm);
-  margin: var(--spacing-sm);
+  padding: var(--spacing-base);
+  padding-right: var(--spacing-lg);
   background: var(--black);
   color: var(--white);
   cursor: pointer;
+}
+.select-group select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.select-group .fa-angle-down {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: var(--spacing-base);
 }
 
 /* Spinning loader */
@@ -372,7 +389,7 @@ select {
 }
 .balances-page-token h2 {
   font-weight: var(--thin);
-  width: 55px;
+  width: 45px;
 }
 .balances-page-balance span {
   opacity: var(--subtle-opacity);
@@ -396,7 +413,7 @@ select {
   margin-bottom: var(--spacing-sm);
   width: 100%;
 }
-.transfer-page .transfer-select select {
+.transfer-page .transfer-select .select-group {
   margin-bottom: -2px;
 }
 .transfer-page .token-logo {
@@ -417,9 +434,12 @@ select {
 }
 .settings-page-setting span {
   opacity: var(--subtle-opacity);
-  margin: 0 0 -10px var(--spacing-sm);
+  margin: 0 0 -5px var(--spacing-sm);
 }
-.settings-page-setting select {
+.settings-page-setting .select-group {
   width: 100%;
-  margin: var(--spacing-lg) 0;
+  margin: var(--spacing-base) 0;
+}
+.settings-page select {
+  margin: unset;
 }

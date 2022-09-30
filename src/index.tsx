@@ -1,11 +1,11 @@
-import './styles.css';
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import "./styles.css";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 
 // Import the Ethier react plugin and button to your dApp
-import { EthierReact, EthierButton, useEthier } from './ethier-react';
+import { EthierReact, EthierButton, useEthier } from "./ethier-react";
 
-const root = createRoot(document.getElementById('root') as HTMLElement);
+const root = createRoot(document.getElementById("root") as HTMLElement);
 root.render(
   <StrictMode>
     {/* Wrap your dApp in the provider */}
@@ -21,10 +21,10 @@ function ExampleDapp() {
 
   return (
     <div>
-      <div className='navbar-container flex-centered'>
-        <div className='navbar flex justify-between align-center'>
+      <div className="navbar-container flex-centered">
+        <div className="navbar flex justify-between align-center">
           <Wireframe height={25} width={100} />
-          <div className='flex-centered desktop-only'>
+          <div className="flex-centered desktop-only">
             <Wireframe height={10} width={50} />
             <Wireframe height={10} width={50} />
             <Wireframe height={10} width={50} />
@@ -33,15 +33,23 @@ function ExampleDapp() {
           <EthierButton />
         </div>
       </div>
-      <div className='view flex-centered column'>
-        <div className='example-box flex-centered column'>
-          {ethier.isLoggedIn && (
-            <div className='example-box-data flex-centered'>
-              <p className='user-email'>{ethier.email}</p>
-              {['ETH', 'USDT', 'UNI'].map((token) => (
+      <div className="view flex-centered column">
+        <div className="example-box flex-centered column">
+          {ethier.isLoggedIn && ethier.ethAddress && (
+            <div className="example-box-data flex-centered">
+              <div className="user-email flex align-center justify-between">
+                <p>{ethier.email}</p>
+                <p>{`${ethier.ethAddress.substring(
+                  0,
+                  4
+                )}...${ethier.ethAddress.substring(
+                  ethier.ethAddress.length - 4
+                )}`}</p>
+              </div>
+              {["ETH", "USDT", "UNI"].map((token) => (
                 <div
                   key={token}
-                  className='example-box-data-item flex align-center justify-between'
+                  className="example-box-data-item flex align-center justify-between"
                 >
                   <b>{token}</b>
                   <p>{ethier.getTokenBalance(token)}</p>
@@ -50,16 +58,16 @@ function ExampleDapp() {
             </div>
           )}
           <span
-            className='btn'
+            className="btn"
             onClick={ethier.isLoggedIn ? ethier.logout : ethier.promptLogin}
           >
             {ethier.isLoggedIn
-              ? 'Disconnect from Ethier'
-              : 'Connect with Ethier'}
+              ? "Disconnect from Ethier"
+              : "Connect with Ethier"}
           </span>
         </div>
-        <Wireframe height={150} width='80%' />
-        <Wireframe height={350} width='80%' />
+        <Wireframe height={150} width="80%" />
+        <Wireframe height={350} width="80%" />
       </div>
     </div>
   );
@@ -72,7 +80,7 @@ function Wireframe(props: {
   const { height, width } = props;
   return (
     <div
-      className={`wireframe ${props.className ?? ''}`}
+      className={`wireframe ${props.className ?? ""}`}
       style={{ height, width }}
     ></div>
   );

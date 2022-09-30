@@ -1,36 +1,36 @@
-import { useEffect, useState } from 'react';
-import BN from 'bn.js';
-import { useEthier, useUser } from '../../contexts/ethier';
-import { Token, useTokenPrices } from '../../contexts/tokenPrices';
-import { getTransferTransaction, web3 } from '../../util/web3';
-import { useCurrencyFormatting } from '../../util/format';
-import { TokenLogo } from '../TokenLogo';
-import { ReactComponent as Spinner } from '../../assets/spinner.svg';
+import { useEffect, useState } from "react";
+import BN from "bn.js";
+import { useEthier, useUser } from "../../contexts/ethier";
+import { Token, useTokenPrices } from "../../contexts/tokenPrices";
+import { getTransferTransaction, web3 } from "../../util/web3";
+import { useCurrencyFormatting } from "../../util/format";
+import { TokenLogo } from "../TokenLogo";
+import { ReactComponent as Spinner } from "../../assets/spinner.svg";
 
 export function TransferPage() {
   const { currencyFormatter } = useCurrencyFormatting();
   const { signAndSendTransaction } = useEthier();
   const { user } = useUser();
   const tokenPrices = useTokenPrices();
-  const [token, setToken] = useState<Token>('ETH');
-  const [amountString, setAmountString] = useState('');
-  const [toAccount, setToAccount] = useState('');
+  const [token, setToken] = useState<Token>("ETH");
+  const [amountString, setAmountString] = useState("");
+  const [toAccount, setToAccount] = useState("");
   const invalidToAccount =
     !toAccount.length || !web3.utils.isAddress(toAccount);
   const [gas, setGas] = useState(0);
   const [tx, setTx] = useState<any>();
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Submit a token transfer
   async function submitTransfer() {
     // Check inputs
     if (!user?.ethAccount) return;
-    let error = '';
-    if (!amountString.length || amountString === '0') {
-      error = 'Enter an amount';
+    let error = "";
+    if (!amountString.length || amountString === "0") {
+      error = "Enter an amount";
     } else if (invalidToAccount) {
-      error = 'Invalid destination address';
+      error = "Invalid destination address";
     }
     if (error) {
       setError(error);
@@ -78,34 +78,37 @@ export function TransferPage() {
 
   if (user) {
     return (
-      <div className='ethier-widget-page transfer-page flex-centered column'>
-        <div className='transfer-select flex align-center justify-between'>
-          <h1 className='brand-text'>Transfer</h1>
-          <select
-            value={token}
-            onChange={(e) => setToken(e.target.value as Token)}
-          >
-            {Object.keys(user.tokenBalances).map((token) => (
-              <option key={token} value={token}>
-                {token}
-              </option>
-            ))}
-          </select>
+      <div className="ethier-widget-page transfer-page flex-centered column">
+        <div className="transfer-select flex align-center justify-between">
+          <h1 className="brand-text">Transfer</h1>
+          <div className="select-group">
+            <select
+              value={token}
+              onChange={(e) => setToken(e.target.value as Token)}
+            >
+              {Object.keys(user.tokenBalances).map((token) => (
+                <option key={token} value={token}>
+                  {token}
+                </option>
+              ))}
+            </select>
+            <i className="fa-solid fa-angle-down"></i>
+          </div>
           <TokenLogo token={token as Token} />
         </div>
         <div
-          className={`input-group ${amountString.length ? 'has-value' : ''}`}
+          className={`input-group ${amountString.length ? "has-value" : ""}`}
         >
           <input
-            type='text'
+            type="text"
             value={amountString}
             onChange={(e) => {
               let inputString = e.target.value;
               // Check string value of input and adjust if necessary
               while (
-                !inputString.includes('.') &&
+                !inputString.includes(".") &&
                 inputString.length > 1 &&
-                inputString[0] === '0'
+                inputString[0] === "0"
               ) {
                 inputString = inputString.substring(1);
               }
@@ -115,7 +118,7 @@ export function TransferPage() {
                 +inputString < 0 ||
                 +inputString > Number.MAX_SAFE_INTEGER
               ) {
-                inputString = '0';
+                inputString = "0";
               }
 
               setAmountString(inputString);
@@ -124,36 +127,36 @@ export function TransferPage() {
               const amount = getWithinMaxRange();
               setAmountString(amount.toString());
             }}
-            onKeyUp={(e) => (e.code === 'Enter' ? submitTransfer() : null)}
+            onKeyUp={(e) => (e.code === "Enter" ? submitTransfer() : null)}
           />
-          <label className='placeholder'>Amount</label>
-          <span className='price-estimation'>
+          <label className="placeholder">Amount</label>
+          <span className="price-estimation">
             {currencyFormatter(getWithinMaxRange() * tokenPrices[token], true)}
           </span>
         </div>
-        <div className={`input-group ${toAccount.length ? 'has-value' : ''}`}>
+        <div className={`input-group ${toAccount.length ? "has-value" : ""}`}>
           <input
-            type='text'
+            type="text"
             value={toAccount}
             onChange={(e) => setToAccount(e.target.value)}
-            onKeyUp={(e) => (e.code === 'Enter' ? submitTransfer() : null)}
+            onKeyUp={(e) => (e.code === "Enter" ? submitTransfer() : null)}
           />
-          <label className='placeholder'>To</label>
+          <label className="placeholder">To</label>
         </div>
         <div
-          className='flex-centered'
-          style={{ marginTop: 'var(--spacing-sm)' }}
+          className="flex-centered"
+          style={{ marginTop: "var(--spacing-sm)" }}
         >
-          <i className='fa-solid fa-fire-flame-curved'></i>&nbsp;≈&nbsp;{gas}
+          <i className="fa-solid fa-fire-flame-curved"></i>&nbsp;≈&nbsp;{gas}
           &nbsp;ETH
         </div>
         <button
           className={`full-width ${
-            error.length && !loading ? 'error-btn' : ''
+            error.length && !loading ? "error-btn" : ""
           }`}
           onClick={submitTransfer}
         >
-          {loading ? <Spinner /> : error.length ? error : 'Send'}
+          {loading ? <Spinner /> : error.length ? error : "Send"}
         </button>
       </div>
     );
