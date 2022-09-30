@@ -351,6 +351,7 @@ select {
   padding-right: 0;
 }
 .balances-page button {
+  width: 100px;
   margin: var(--spacing-sm);
 }
 .balances-page .total-value {

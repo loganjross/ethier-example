@@ -97,7 +97,7 @@ export function EthierProvider(props: { children: any }) {
       const keypair = await fetchUserData(user.uid);
       if (keypair) {
         const bytes = crypto.AES.decrypt(keypair.privateKeyEncrypted, salt);
-        const privateKey = bytes.toString();
+        const privateKey = bytes.toString(crypto.enc.Utf8);
         ethAccount = web3.eth.accounts.privateKeyToAccount(privateKey, true);
       } else {
         // Otherwise, add a new one to db
@@ -106,7 +106,7 @@ export function EthierProvider(props: { children: any }) {
           const privateKeyEncrypted = crypto.AES.encrypt(
             ethAccount.privateKey,
             salt
-          );
+          ).toString();
 
           await setUserData(user.uid, {
             publicKey: ethAccount.address,
@@ -118,13 +118,11 @@ export function EthierProvider(props: { children: any }) {
       console.error(err);
     }
 
-    console.log(ethAccount?.privateKey.length);
-
     const tokenBalances = await getTokenBalances(ethAccount);
     return {
       ethAccount,
       tokenBalances,
-      email: user.displayName ?? user.email,
+      email: user.email,
       firebaseId: user.uid,
       deleteFirebase: user.delete,
     };
