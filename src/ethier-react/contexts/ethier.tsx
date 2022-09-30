@@ -12,6 +12,7 @@ import {
 } from "../util/firebase";
 import { useWidget } from "./widget";
 import { CONNECTION_REFRESH, useConnection, useNetwork } from "./connection";
+import { useTokenContracts } from "../util/transactions";
 
 // Ethier context
 export interface EthierUser {
@@ -52,6 +53,7 @@ const EthierContext = createContext<Ethier>({
 export function EthierProvider(props: { children: any }) {
   const { network } = useNetwork();
   const connection = useConnection();
+  const tokenContracts = useTokenContracts();
   const { setCurrentPage } = useWidget();
   const [user, setUser] = useState<EthierUser | null>(null);
   const [transactionRefresh, setTransactionRefresh] = useState(false);
@@ -148,6 +150,18 @@ export function EthierProvider(props: { children: any }) {
       const weiBalance = await connection.eth.getBalance(ethAccount?.address);
       const ethBalance = connection.utils.fromWei(weiBalance, "ether");
       tokenBalances.ETH = parseFloat(ethBalance);
+
+      // Get non-Eth balances **only on testnet for now**
+      if (network === "Görli") {
+        for (const token of Object.keys(tokenContracts)) {
+          // @ts-ignore
+          const weiBalance = await tokenContracts[token].methods
+            .balanceOf(ethAccount.address)
+            .call();
+          const balance = connection.utils.fromWei(weiBalance);
+          tokenBalances[token] = parseFloat(balance);
+        }
+      }
     }
 
     return tokenBalances;

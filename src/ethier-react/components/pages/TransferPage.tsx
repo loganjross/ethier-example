@@ -3,7 +3,7 @@ import BN from "bn.js";
 import { useConnection } from "../../contexts/connection";
 import { useEthier, useUser } from "../../contexts/ethier";
 import { useTokenPrices } from "../../contexts/tokenPrices";
-import { getTransferTransaction } from "../../util/web3";
+import { getTransferTransaction } from "../../util/transactions";
 import { useCurrencyFormatting } from "../../util/format";
 import { TokenLogo } from "../TokenLogo";
 import { ReactComponent as Spinner } from "../../assets/spinner.svg";
@@ -75,7 +75,8 @@ export function TransferPage() {
       connection,
       user.ethAccount.address,
       toAccount,
-      amount
+      amount,
+      undefined
     ).then(async (tx) => {
       const gas = await connection.eth.estimateGas(tx);
       const gasPrice = await connection.eth.getGasPrice();

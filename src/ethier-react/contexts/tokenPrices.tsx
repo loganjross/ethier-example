@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 // Token prices context
-export const tokens = ["ETH"];
+export const tokens = ["ETH", "ETHI"];
 const TokenPricesContext = createContext<{
   tokenPrices: Record<string, number>;
 }>({
@@ -20,7 +20,7 @@ export function TokenPricesProvider(props: { children: any }) {
         `https://min-api.cryptocompare.com/data/price?fsym=${token}&tsyms=USD`
       );
       const price = (await resp.json()).USD;
-      tokenPrices[token] = price;
+      tokenPrices[token] = !isNaN(price) ? price : 0;
     });
     setTokenPrices(tokenPrices);
   }, []);
